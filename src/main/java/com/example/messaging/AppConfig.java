@@ -32,4 +32,9 @@ public class AppConfig {
 	public void loveYouNani(){
 		System.out.println("Love You and Sorry");
 	}
+	
+	public void loveYouKana()
+	{
+		System.out.println("Me too sorry and lv u too");
+	}
 }
