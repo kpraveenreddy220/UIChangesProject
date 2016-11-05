@@ -28,4 +28,8 @@ public class AppConfig {
 		
 		return broker;
 	}
+	
+	public void loveYouNani(){
+		System.out.println("Love You and Sorry");
+	}
 }
