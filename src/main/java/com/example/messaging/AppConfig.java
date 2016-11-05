@@ -30,11 +30,11 @@ public class AppConfig {
 	}
 	
 	public void loveYouNani(){
-		System.out.println("Love You!");
+		System.out.println("Love You nani");
 	}
 	
 	public void loveYouKana()
 	{
-		System.out.println("Me too sorry and lv u too");
+		System.out.println("jfksdjfls");
 	}
 }
