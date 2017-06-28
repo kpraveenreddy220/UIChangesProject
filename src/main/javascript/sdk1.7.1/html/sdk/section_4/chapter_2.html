@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+   <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+  <link rel="import" href="html/desktopapp/ip.txt">
+  <script>
+      function loadIP() {
+          $("#IP_addr").load("/html/desktopapp/ip.html");
+      }
+  </script>
+
+  <style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    }                                                                          
+  </style>                                                                     
+
+</head>
+
+<body onload='loadIP()'>
+ <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+    	<h1 id="par-1">Overview</h1>
+    	<h1 id="par-2">PCI Requirements</h1>
+    	The following are extracts from the PCI Frequently Asked Questions.
+    	<p>
+    	<b>Question to PCI: What vulnerabilities must be taken into account for a touch screen? </b>
+    	</p>
+    	<p>
+		<b>PCI Answer:</b><i> The API for firmware and applications (if applicable) needs to be
+		looked at carefully to determine the conditions under which plain-text data entry is
+		allowed. Example: it should not be possible unless under acquirer display prompt
+		controlled devices, for a third party to display an image (JPEG) that states
+		"press enter when ready for PIN entry" and then have a plain-text ke pop up on the
+		next screen. The extra caution is warranted for touch screen devices because of the desire
+		to make touch-screen devices user-friendly and to run many different, unauthenticated,
+		uncontrolled applications. This is especially true for the devices that are intended to
+		be held because of the tendency to regard them as a PDA that can perform debit transactions.</i></p>
+		<p>
+		<b>Equinox Comment:</b> Any screen that contains a keypad must also contain a clear
+		and concise text message describing what is being prompted for.  If the screen is not
+		clear and concise, it must not be signed.
+		</p>
+		<p>&nbsp;<p>
+		<p>
+		<b>Question to PCI: What restrictions exist if a device can display uncontrolled
+		 messages and the keypad is used to enter non-PIN data? </b>
+		</p>
+		<p>
+		<b>PCI Answer:</b><i> The prompts for non-PIN data entry must be under the control of
+		the cryptographic unit and must be specific such that a cardholder would not enter
+		a PIN at an inappropriate time. An uncontrolled message followed by an ambiguous
+		prompt for non-PIN data could lead to a cardholder entering their PIN at an
+		inappropriate time. For example, if the device displayed the uncontrolled message
+		"Ready for PIN" then prompted for plain-text data while displaying "Enter 
+		Data," the cardholder may enter their PIN at this non-PIN data prompt.</i></p>
+		<p>
+		<b>Equinox Comment:</b> The area of the screen that contains the signed prompt
+		and potentially a touch screen numeric keypad cannot contain an uncontrolled message.
+		However, the area outside the secure image may contain uncontrolled messages.
+		For example, a screen may contain the uncontrolled message "Total amount due $15.69"
+		and the secure area may contain a signed image prompting "Enter TIP Amount"
+		and a numeric touch screen keypad. </p>
+		
+		<p>&nbsp;<p>
+		
+		<b>Question to PCI:</b> Is it acceptable for uncontrolled messages to be displayed
+		 simultaneously with prompts for data entry? 
+		<p>
+		<b>PCI Answer:</b><i> No. Any text, including images, other than numbers and
+		 punctuation, displayed along with a prompt is considered a prompt and must
+		 comply with all requirements governing prompts. </i></p>
+		<p>
+		<b>Equinox Comment:</b> The Luxe secure prompt image file does not allow for
+		 uncontrolled messages to be shown within the prompt.</p>
+		<p>&nbsp;<p>
+		<p>&nbsp;<p>
+		
+		<h1 id="par-3">Signing the Secure Image File</h1>
+		The SDK terminal contains a ResourceSigner tool.  This allow the developer to
+		 select an image, enter a Message Authentication (MAC) key, and ask the Luxe
+		 to generate the corresponsing message signature.
+		For development terminals, it is assumed that the terminal will have test
+		 keys injected and the developer must use the same (test) key when signing
+		 the secure image resource.
+		<p>
+		For productions terminals, as the production keys are secret, the secure
+		 image files must be reviewed and signed using a secure signer system
+		 that contains the production MAC key.
+		<p>&nbsp;<p>
+		<p>&nbsp;<p>
+		<h1 id="par-4">Loading the Secure Resources</h1>
+		<h2 id="sub-par-4-1">Loading Resources at Boot Time</h2>
+		In <em>production</em> terminals, the secure resources are copied to the secure processor during
+		 the terminal boot up process.  The secure processor will validate the resources 
+		signature, and if authenticated, will store the resource into the internal secure area.
+		<p>
+		Global, system wide resources that are available to all programs are located in
+		 directory /home/secure.  This directory contains a configuration file app.conf
+		 that specifies the location of a resource control file.  For example:
+		<pre>/home/secure/app.conf</pre>
+		<table> <tr> <td class='codeBlock'>
+<xmp><?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <caption>Placeholder for Global Secure Resources</caption>
+  <autolaunch>false</autolaunch>
+  <browser launch="false" />
+  <resources>resources/resources.xml</resources>
+</application>
+</xmp></td> </tr> </table>
+		This specifies that there are global system wide resources and they are defined in the
+		 following file:
+		
+		<table> <tr> <td class='codeBlock'><xmp>
+<resources>
+    <resource path="checkbox2.bmp" type="Background" keyId="10" name="checkbox2"/>
+    <resource path="demo1.bmp"     type="Background" keyId="10" name="background"/>
+    <resource path="EnterPIN.bmp"  type="PINMessage" keyId="10" id="150"/>
+    <resource path="keyboard0.bmp" signature="3e0419452a89d837" type="Background" keyId="10" name="keyboard0">
+    <resource path="keyboard1.bmp" type="Background" keyId="10" name="keyboard1"/>
+    <resource path="keyboard2.bmp" type="Background" keyId="10" name="keyboard2"/>
+    <resource path="menu-btn.bmp"  type="Background" keyId="10" name="menu-btn"/>
+    <resource path="radiobox2.bmp" type="Background" keyId="10" name="radiobox2"/>
+    <resource path="sign.bmp"      type="Background" keyId="10" name="sign"/>
+    <resource path="keyboard0.res" type="Keyboard"   keyId="10" name="keyboard0"/>
+    <resource path="keyboard1.res" type="Keyboard"   keyId="10" name="keyboard1"/>
+    <resource path="keyboard2.res" type="Keyboard"   keyId="10" name="keyboard2"/>
+</resources>
+		</xmp></td> </tr> </table>
+		The signature for each image resource file may either be specified in the resource
+		 XML control file, or there must be a small signature file that contains the binary
+		 value of the signature.  For example, the image file
+		 <span style='font-family: "Courier New";'>keyboard0.bmp</span> has the signature
+		 specified in the control file, whereas the signature for the image file
+		<span style='font-family: "Courier New";'>keyboard1.bmp</span> is not in the control
+		 file and is expected to be in a file <span style='font-family: "Courier New";'>keyboard0.bmp.sig</span>
+		
+		<h2 id="sub-par-4-2">Loading Resources at Run Time - SDK Terminal Only</h2>
+		To allow the developer to rapidly generate and test secure images, the SDK adds three
+		 secure resource HTTP API fucntions:
+		<ul>
+			<li>sdk/resource/load</li>
+			<li>sdk/resource/unload</li>
+			<li>sdk/resource/list</li>
+		</ul>
+		<hr>
+		<p>
+		<font size="-2">This page is located in /home/sdk/html/section_5/index.html</font>
+		<p>		
+		
+   </div>
+</div>
+</body>
+</html>

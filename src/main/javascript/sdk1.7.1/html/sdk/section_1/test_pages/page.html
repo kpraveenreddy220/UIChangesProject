@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap-theme.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/ace.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/ext-static_highlight.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/mode-xml.js"></script>
+    <!--<script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/mode-javascript.js"></script>-->
+    <!--<script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/theme-monokai.js"></script>-->
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/theme-chrome.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+    <script type="text/javascript">
+        var applicationNames = [];
+        function getApplicationNames() {
+            var $appNames = $("#app_list");
+            fileDir("", "d", function(applicationNames) {
+                for(var d = 0 ; d < applicationNames.length ; d++) {
+                    var appName = applicationNames[d];
+                    var html = '<li><a href="#">' + appName + '</a></li>';
+                    $appNames.append(html);
+                }
+                $('.dropdown-menu a').on('click', function(){
+                    var appName = $(this).html();
+                    $("#appName").text(appName);
+                    var $pageList = $("#pages_list");
+
+                    $pageList.empty();
+                    fileDir(appName + "/html/", "f", function(pageNames) {
+
+                        if(pageNames.length > 0) {
+                            for (var p = 0; p < pageNames.length; p++) {
+                                var pageName = pageNames[p];
+                                var html = '<li onclick="onShowAppPage(\'' + appName + '\',\'' + pageName+ '\')">' +
+                                        '<div>' +
+                                        '<img style="float: left; max-height: 32px;" src="/html/sdk/assets/images/html-page-icon.png"/>' +
+                                        '<div class="text-limit-2-line" style="float: left; padding-left: 5px; word-wrap: break-word; width: 105px;">' + pageName + '</div>' +
+                                        '</div>' +
+                                            //                                         '<a href="" class="standard_link edit-item" ng-click="onProjectEdit(appName, project)">Edit</a>' +
+                                        '</li>';
+                                $pageList.append(html);
+                            }
+                        } else {
+                            $pageList.append('<div style="text-align: center; padding-top: 100px; font-style: italic;">There are no pages in \'' + appName + '\' application</div>');
+                        }
+                    });
+                });
+            });
+        }
+
+        function onShowAppPage(appName, pageName) {
+            var url = terminalHostname + "/cgi-bin/page/show";
+            var httpRequestType = "GET";
+            $.ajax({
+                type : httpRequestType,
+                url: url,
+                data : {"path": appName + "/" + pageName},
+                dataType: "json",
+                success : function(response) {
+                    $("#pageShowRequestResponse").show();
+
+                    $("#pageShowRequest").text(httpRequestType + " " + this.url);
+                    $("#pageShowResponse").text(response);
+
+                    doHighlightByIds(["pageShowRequest", "pageShowResponse"]);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            getApplicationNames();
+        });
+    </script>
+</head>
+<body>
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-2 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-10">
+        <h1 id="par-1">Page functions</h1>
+        <h2 id="sub-par-1-1">Page show for application pages</h2>
+        <div class="featurette">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Select application
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="app_list"></ul>
+            </div>
+
+            <div id="pageShowRequestResponse" style="margin-top: 5px; display: none;">
+                <table width="100%">
+                    <tr>
+                        <td width="80%">
+                            <b>HTTP Request</b>
+                            <pre id="pageShowRequest" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+                        </td>
+                        <td>
+                            <b>HTTP Response</b>
+                            <pre id="pageShowResponse" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="text-align: center;">
+                <h3 id="appName"></h3>
+                Below is the list of application pages. Click on page to open page on terminal.
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <ul id="pages_list" class="thumbnail-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

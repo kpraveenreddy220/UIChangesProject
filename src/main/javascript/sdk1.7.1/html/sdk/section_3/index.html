@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+    <!--<script type="text/javascript" src="/common/jphoenix.js"></script>-->
+    <!--<script type="text/javascript" src="/common/jutils.js"></script>-->
+
+</head>
+<body>
+<nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+        <h1 id="par-1">Luxe AppBuilder</h1>
+        AppBuilder is a web based tool that can generate HTML pages for displaying on the Luxe 8000i terminal.
+        <ul>
+            <li><a href='/html/sdk/documentation/Luxe_-_PageBuilder_User_Guide.pdf'>A printable copy of the <b>Luxe AppBuilder User Guide</b></a></li>
+            <li><a href='javascript:gotoAppBuilder();'>AppBuilder Tool</a></li>
+        </ul>
+
+        <h1 id="par-2">Local Key Injection </h1>
+        For an overview of the Production Local Key Injection Process please see
+        <a href='/html/sdk/documentation/Luxe_LKI_Getting_Started.pdf'>this</a>
+        document.<p>
+        Equinox provides a Local Key Injection cable that contains a
+        9 pin RS232 connector on one end for connecting to a
+        computer running the SPDKit.exe Windows utility, and terminating
+        in a "special" smart card board
+        that must be inserted into a Luxe terminal that is in local key injection mode.<br />
+        <img src='/html/sdk/assets/images/local_key_injection_cable.jpg' width='300px'>
+
+        <h2 id="sub-par-2-1">Luxe SPDKit - Local Key Injection</h2>
+        SPDKit is a Windows based tool that can be used to inject keys into the Equinox
+        series of terminals including the Luxe
+        <ul>
+            <li><a href='/html/sdk/documentation/Luxe_SPDKit_User_Guide.pdf'>SPDKit User Guide</a></li>
+            <li><a href='/html/sdk/documentation/spdkit.files/SPDKit.exe'>Windows SPDKit.exe</a> utility</li>
+            <li><a href='/html/sdk/documentation/spdkit.files/sysWOW64.zip'>Windows sysWOW64</a> required DLL's</li>
+        </ul>
+        To install SPDKit.exe on a Windows 10 system:-
+        <ol>
+            <li>Download the <a href='/html/sdk/documentation/spdkit.files/SPDKit.exe'>Windows SPDKit.exe</a>
+                utility and place it into a convenient location on your computer</li>
+            <li>Download the <a href='/html/sdk/documentation/spdkit.files/sysWOW64.zip'>Windows sysWOW64</a> required
+                DLL's .zip file and extract into your c:\Windows\SysWOW64 directory.  Note that this may need to be
+                <b><i>Run as administrator</i></b></li>
+            <li>Open/run a cmd.exe window as Administrator and type the following commands:-
+                <ol>
+                    <li>cd \windows\SysWOW64</li>
+                    <li>regsvr32 mscomm32.ocx</li>
+                </ol>
+            </li>
+        </ol>
+
+        <h2 id="sub-par-2-2">Local Key Injection Mode</h2>
+        To test the local key injection mode, there is a
+        <a href='/html/sdk/documentation/spdkit.files/Luxe_Inject_Test_Keys.sct'>Luxe_Inject_Test_Keys.sct</a>
+        SPDKit.exe script file.  This is a simple text file that may be viewed or modified using a text editor
+        <p>
+            This <a href='/cgi-bin/defaultapp/key?function=local'>link</a> puts the Luxe terminal into <b><i>local key injection</i></b>
+            mode and waits for the key inction to be completed.  While in this mode,
+            the smart card interface device operates as a local key injection port.<br>
+            <img src='/html/sdk/assets/images/Luxe_key_injection_1.jpg' width='300px'>
+        </p>
+
+        <h1 id="par-3">Luxe KeyboardDesigner</a></h1>
+        This utility allows a developer to design and load a touch screen keyboard resource into the Luxe's
+        secure resource area.
+        <ul>
+            <li><a href='/html/sdk/documentation/Luxe_-_KeyboardDesigner_User_Guide.pdf'>Documentation</a></li>
+            <li><a href='javascript:gotoKeyboardDesigner();'>Tool</a></li>
+        </ul>
+
+        <h1 id="par-4">Luxe InstallationCreator</h1>
+        This utility can take an application directory structure, and create a development signed .RPM file that
+        can be installed into a development terminal using the HTTP API <b>package/load?install=true</b> command.
+        <ul>
+            <li><a href='/html/sdk/installationcreator'>Documentation on creating a Luxe RPM</a></li>
+        </ul>
+
+        <h1 id="par-5">Luxe ResourceSigner</h1>
+        The Luxe ResourceSigner is a web based tool that can sign secure resources and return the signature
+        of a resource in a format suitable for use by the prompt/resource command.  This section also
+        contains some test web pages that can install and test the usage of signed resources.
+        <ul>
+            <li><a href='/html/sdk/section_3/tools/resourcesigner'>Tool</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

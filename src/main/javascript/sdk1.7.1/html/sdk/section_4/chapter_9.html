@@ -1,0 +1,541 @@
+<HTML>
+<HEAD>
+  <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+<TITLE>Building RPMs</TITLE>
+<style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    }                                                                          
+  </style>
+</HEAD>
+<BODY CLASS="SECT1" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#840084" ALINK="#0000FF">
+    <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+	</nav>
+	<div class="container-fluid">
+	    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+	        <ul class="main-menu nav nav-stacked affix">
+	        </ul>
+	    </div>
+	    <div id="static-content" class="col-md-9">
+	    <h1 id="par-1">Overview</h1>
+        	The following RPM HOWTO is from <a href='http://www.tldp.org/HOWTO/RPM-HOWTO/build.html'>
+			the Linux Documentation Project </a>
+ 		<h1 id="par-2">Building RPMs</h1>
+ 		<p>
+	      Building RPMs is fairly easy to do, especially if you can get the
+	      software you are trying to package to build on its own.  We assume
+	      here that you know how to build software from source.  If you don't
+	      you
+      	</p>
+      	<p> The basic procedure to build an RPM is as follows:
+      	<ul>
+            <li>Get the source code you are building the RPM for to build
+	  			on your system.</li>
+		   <li>Make a patch of any changes you had to make to the sources to get
+		  		them to build properly.</li>
+		   <li>Make a spec file for the package.</li>
+		   <li>Make sure everything is in its proper place.</li>
+	       <li> Build the package using RPM.</li>   
+	       <li>Under normal operation, RPM builds both binary and source packages.</li>
+        </ul>
+ 		<h1 id="par-3">The Spec File</h1>
+ 		<p>
+		We'll begin with discussion of the spec file.  Spec files are required
+		to build a package.  The spec file is a description of the software
+		along with instructions on how to build it and a file list for all the
+		binaries that get installed.
+		</p>
+		<p>	You'll want to name your spec file according to a standard convention.
+		It should be the package name-dash-version number-dash-release
+		number-dot-spec.  This will ensure that if you install multiple source
+		RPMs for different versions of the same package that at least the spec
+		files remain intact.</p>
+		<p>Here is a small spec file (eject-2.0.2-1.spec):</p>
+		<pre>
+Summary: A program that ejects removable media using software control.
+Name: eject
+Version: 2.0.2
+Release: 3
+Copyright: GPL
+Group: System Environment/Base
+Source: http://metalab.unc.edu/pub/Linux/utils/disk-management/eject-2.0.2.tar.gz
+Patch: eject-2.0.2-buildroot.patch
+BuildRoot: /var/tmp/%{name}-buildroot
+
+%description
+The eject program allows the user to eject removable media
+(typically CD-ROMs, floppy disks or Iomega Jaz or Zip disks)
+using software control. Eject can also control some multi-
+disk CD changers and even some devices' auto-eject features.
+
+Install eject if you'd like to eject removable media using
+software control.
+
+%prep
+%setup -q
+%patch -p1 -b .buildroot
+
+%build
+make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+mkdir -p $RPM_BUILD_ROOT/usr/man/man1
+
+install -s -m 755 eject $RPM_BUILD_ROOT/usr/bin/eject
+install -m 644 eject.1 $RPM_BUILD_ROOT/usr/man/man1/eject.1
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%doc README TODO COPYING ChangeLog
+
+/usr/bin/eject
+/usr/man/man1/eject.1
+
+%changelog
+* Sun Mar 21 1999 Cristian Gafton &#60;gafton@redhat.com&#62; 
+- auto rebuild in the new build environment (release 3)
+
+* Wed Feb 24 1999 Preston Brown &#60;pbrown@redhat.com&#62; 
+- Injected new description and group.
+
+[ Some changelog entries trimmed for brevity.  -Editor. ]
+      </pre>
+      <h1 id="par-4">The Header</h1>
+      <p>
+      The header has some standard fields in it that you need to fill in.  There
+	  are a few caveats as well.  The fields must be filled in as follows:
+      </p>
+      	   <li><em>Summary:</em>This is a one line description of the package.</li>
+		   <li><em>Name:</em>This must be the name string from the rpm
+	    		filename you plan to use.</li>
+		   <li><em>Version:</em>This must be the version string from
+				 the rpm filename you plan to use.</li>
+		   <li><em>Release:</em>This is the release number for a
+			    package of the same version (ie. if we make a package and find it to
+			    be slightly broken and need to make it again, the next package would
+			    be release number.</li>
+	       <li><em>Copyright:</em> This line tells how a package is
+			    copyrighted.  You should use something like GPL, BSD, MIT, public
+			    domain, distributable, or commercial.</li>   
+	       <li><em>Group:</em>This is a group that the package belongs
+	    		to in a higher level package tool or the Red Hat installer.</li>
+	       <li><em>Source:</em>This line points at the HOME location
+			    of the pristine source file.  It is used if you ever want to get the
+			    source again or check for newer versions.  Caveat:  The filename in
+			    this line MUST match the filename you have on your own system
+			    (ie. don't download the source file and change its name).  You can
+			    also specify more than one source file using lines like:</li>
+		    <pre>
+Source0: blah-0.tar.gz
+Source1: blah-1.tar.gz
+Source2: fooblah.tar.gz
+ 			 </pre>
+	 		<p>These files would go in the 
+	  			<span clas="SYSTEMITEM">SOURCES</span>
+	  				directory. (The directory structure is discussed in a later section,
+	    		"The Source Directory Tree".)
+	 		</p>
+	 		<li><em>Patch:</em>This is the place you can find the patch
+		    if you need to download it again.  Caveat:  The filename here must
+		    match the one you use when you make YOUR patch.  You may also want
+		    to note that you can have multiple patch files much as you can have
+		    multiple sources.  ] You would have something like:</li>
+		    <pre>
+Patch0: blah-0.patch
+Patch1: blah-1.patch
+Patch2: fooblah.patch
+	  		</pre>
+	  		<p>These files would go in the 
+	  			<span clas="SYSTEMITEM">SOURCES</span>
+	  				directory. (The directory structure is discussed in a later section,
+	    		"The Source Directory Tree".)
+	 		</p>
+	 		<li><em>Group:</em>This line is used to tell high level
+	    installation programs (such as Red Hat's
+	    <span class="APPLICATION">gnorpm</span>) where to place this particular
+	    program in its hierarchical structure.  You can find the latest
+	    description in <span class="SYSTEMITEM">/usr/doc/rpm*/GROUPS</span>.  The
+	    group tree currently looks something like this:</li>
+	    <pre>
+Amusements/Games
+Amusements/Graphics
+Applications/Archiving
+Applications/Communications
+Applications/Databases
+Applications/Editors
+Applications/Emulators
+Applications/Engineering
+Applications/File
+Applications/Internet
+Applications/Multimedia
+Applications/Productivity
+Applications/Publishing
+Applications/System
+Applications/Text
+Development/Debuggers
+Development/Languages
+Development/Libraries
+Development/System
+Development/Tools
+Documentation
+System Environment/Base
+System Environment/Daemons
+System Environment/Kernel
+System Environment/Libraries
+System Environment/Shells
+User Interface/Desktops
+User Interface/X
+User Interface/X Hardware Support
+	  		</pre>
+	    <li><em>BuildRoot:</em>This line allows you to specify a
+		    directory as the "root" for building and installing the new
+		    package.  You can use this to help test your package before having
+		    it installed on your machine.</li>
+	    <li><em>Description:</em>It's not really a header item, but
+	    should be described with the rest of the header.  You need one
+	    description tag per package and/or subpackage.  This is a multi-line
+	    field that should be used to give a comprehensive description of the
+	    package.</li>
+	    <h1 id="par-5">Prep</h1>
+      <p>
+      This is the second section in the spec file.  It is used to get the
+		sources ready to build.  Here you need to do anything necessary to get
+		the sources patched and setup like they need to be setup to do a
+		<b class="COMMAND">make</b>
+	  </p>
+	  <p>One thing to note:  Each of these sections is really just a place to
+		execute shell scripts.  You could simply make an
+		<span class="SYSTEMITEM">sh</span> script and put it after the
+		<em>%prep</em> tag to unpack and patch your sources.
+		We have made macros to aid in this, however.
+      </p>
+      <p>The first of these macros is the <em>%setup</em>
+		macro.  In its simplest form (no command line options), it simply
+		unpacks the sources and <b class="COMMAND">cd</b>'s into the source
+		directory.  It also takes the following options:
+	  </p>
+			<ul>
+				<li><p>
+						<tt CLASS="PARAMETER">
+							<i>-n name</i>
+						</tt>
+						will set the name of the build directory to the listed <em>name</em>.
+						The default is <em>$NAME-$VERSION</em>. Other possibilities
+						include <em>$NAME</em>, <em>${NAME}${VERSION}</em>, or
+						whatever the main tar file uses. (Please note that these "$"
+						variables are <em>not</em> real variables available within the
+						spec file. They are really just used here in place of a sample
+						name. You need to use the real name and version in your package,
+						not a variable.)
+					</p></li>
+				 <li><p>
+							<tt class="PARAMETER">
+								<i>-c</i>
+							</tt>
+							will create and cd to the named directory <EM>before</EM> doing
+							the untar.
+						</p></li>
+				  <li><p>
+							<tt CLASS="PARAMETER">
+								<i>-b #</i>
+							</tt>
+							will untar Source# <em>before</em> <b CLASS="COMMAND">cd</b>'ing
+							into the directory (and this makes no sense with
+							<tt CLASS="PARAMETER">
+								<i>-c</i>
+							</tt>
+							so don't do it). This is only useful with multiple source files.
+						</p></li>
+					<li STYLE="list-style-type: disc"><P>
+							<tt CLASS="PARAMETER">
+								<i>-a #</i>
+							</tt>
+							will untar Source# <em>after</em> cd'ing into the directory.
+						</p></li>
+					<li STYLE="list-style-type: disc"><p>
+							<tt CLASS="PARAMETER">
+								<i>-T</i>
+							</tt>
+							This option overrides the default action of untarring the Source
+							and requires a
+							<tt CLASS="PARAMETER">
+								<i>-b 0</i>
+							</tt>
+							or
+							<tt CLASS="PARAMETER">
+								<i>-a 0</i>
+							</tt>
+							to get the main source file untarred. You need this when there
+							are secondary sources.
+						</P></li>
+					<li STYLE="list-style-type: disc"><p>
+							<tt CLASS="PARAMETER">
+								<i>-D</i>
+							</tt>
+							Do <em>not</em> delete the directory before unpacking. This is
+							only useful where you have more than one setup macro. It should <em>only</em>
+							be used in setup macros <em>after</em> the first one (but never
+							in the first one).
+						</P></li>
+				 </ul>
+
+			<P>
+				The next of the available macros is the <EM>%patch</EM> macro.
+				This macro helps automate the process of applying patches to the
+				sources. It takes several options, listed below:
+			</P>
+			<UL>
+				<LI><P>
+						<EM>#</EM> will apply Patch# as the patch file.
+					</P></LI>
+				<LI><P>
+						<TT CLASS="PARAMETER">
+							<I>-p #</I>
+						</TT>
+						specifies the number of directories to strip for the patch(1)
+						command.
+					</P></LI>
+				<LI><P>
+						<TT CLASS="PARAMETER">
+							<I>-P</I>
+						</TT>
+						The default action is to apply <B CLASS="COMMAND">Patch</B> (or
+						<B CLASS="COMMAND">Patch0</B>). This flag inhibits the default
+						action and will require a
+						<TT CLASS="PARAMETER">
+							<I>0</I>
+						</TT>
+						to get the main source file untarred. This option is useful in a
+						second (or later) <B CLASS="COMMAND">%patch</B> macro that
+						required a different number than the first macro.
+					</P></LI>
+				<LI><P>
+						You can also do <B CLASS="COMMAND">%patch#</B> instead of doing
+						the real command: <B CLASS="COMMAND">%patch # -P</B>
+					</P></LI>
+				<LI><P>
+						<TT CLASS="PARAMETER">
+							<I>-b extension</I>
+						</TT>
+						will save originals as
+						<TT CLASS="FILENAME">filename.extension</TT>
+						before patching.
+					</P></LI>
+			</UL>
+			<P>
+				That should be all the macros you need. After you have those right,
+				you can also do any other setup you need to do via <SPAN
+					CLASS="SYSTEMITEM">sh</SPAN> type scripting. Anything you include
+				up until the <EM>%build</EM> macro (discussed in the next section)
+				is executed via <SPAN CLASS="SYSTEMITEM">sh</SPAN>. Look at the
+				example above for the types of things you might want to do here.
+			</P>
+		<h1 id="par-6">Build</h1>
+			<P>
+				There aren't really any macros for this section. You should just put
+				any commands here that you would need to use to build the software
+				once you had untarred the source, patched it, and cd'ed into the
+				directory. This is just another set of commands passed to <SPAN
+					CLASS="SYSTEMITEM">sh</SPAN>, so any legal <SPAN
+					CLASS="SYSTEMITEM">sh</SPAN> commands can go here (including
+				comments).
+			</P>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td><IMG SRC="../images/important.gif" HSPACE="5"
+							ALT="Important"></td>
+						<td><P>
+								Your current working directory is reset in each of these
+								sections to the toplevel of the source directory, so keep that
+								in mind. You can <B CLASS="COMMAND">cd</B> into subdirectories
+								if necessary.
+							</P></td>
+					</tr>
+				</tbody>
+			</table>
+			<P>
+				The variable
+				<TT CLASS="VARNAME">RPM_OPT_FLAGS</TT>
+				is set using values in <SPAN CLASS="SYSTEMITEM">/usr/lib/rpm/rpmrc</SPAN>.
+				Look there to make sure you are using values appropriate for your
+				system (in most cases you are). Or simply don't use this variable in
+				your spec file. It is optional.
+			</P>
+			<h1 id="par-7">Install</h1>
+			<P>
+				There aren't really any macros here, either. You basically just want
+				to put whatever commands here that are necessary to install. If you
+				have <B CLASS="COMMAND">make install</B> available to you in the
+				package you are building, put that here. If not, you can either
+				patch the makefile for a <B CLASS="COMMAND">make install</B> and
+				just do a <B CLASS="COMMAND">make install</B> here, or you can
+				hand install them here with <SPAN CLASS="SYSTEMITEM">sh</SPAN>
+				commands. You can consider your current directory to be the toplevel
+				of the source directory.
+			</P>
+			<P>
+				The variable
+				<TT CLASS="VARNAME">RPM_BUILD_ROOT</TT>
+				is available to tell you the path set as the <EM>Buildroot:</EM>
+				in the header. Using build roots are optional but are highly
+				recommended because they keep you from cluttering your system with
+				software that isn't in your RPM database (building an RPM doesn't
+				touch your database...you must go install the binary RPM you just
+				built to do that).
+			</P>
+			<h1 id="par-8">Cleaning you system</h1>
+			<P>
+				It's a good idea to always make sure there is a clean build root
+				before building a package a second time on a system. The <EM>%clean</EM>
+				macro will help with that. Simply put the proper commands there to
+				blow away a former build root. Anal, err, careful folks may want to
+				test that
+				<TT CLASS="VARNAME">RPM_BUILD_ROOT</TT>
+				wasn't set to <SPAN CLASS="SYSTEMITEM">/</SPAN> before doing
+				something this volatile.
+			</P>
+			<h1 id="par-9">Optional pre and post Install/Uninstall Scripts</h1>
+			<P>
+				You can put scripts in that get run before and after the
+				installation and uninstallation of binary packages. A main reason
+				for this is to do things like run <B CLASS="COMMAND">ldconfig</B>
+				after installing or removing packages that contain shared libraries.
+				The macros for each of the scripts is as follows:
+			</P>
+			<P></P>
+			<UL>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%pre</SPAN> is the macro to do
+						pre-install scripts.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%post</SPAN> is the macro to do
+						post-install scripts.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%preun</SPAN> is the macro to do
+						pre-uninstall scripts.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%postun</SPAN> is the macro to do
+						post-uninstall scripts.
+					</P></LI>
+			</UL>
+			<P>
+				The contents of these sections should just be any <SPAN
+					CLASS="SYSTEMITEM">sh</SPAN> style script, though you do <EM>not</EM>
+				need the <SPAN CLASS="SYSTEMITEM">#!/bin/sh</SPAN>.
+			</P>
+			<h1 id="par-10">Files</h1>
+			<P>
+				This is the section where you <EM>must</EM> list the files for the
+				binary package. RPM has no way to know what binaries get installed
+				as a result of <B CLASS="COMMAND">make install</B>. There is <EM>NO</EM>
+				way to do this. Some have suggested doing a <B CLASS="COMMAND">find</B>
+				before and after the package install. With a multiuser system, this
+				is unacceptable as other files may be created during a package
+				building process that have nothing to do with the package itself.
+			</P>
+			<P>There are some macros available to do some special things as
+				well. They are listed and described here:</P>
+			<P></P>
+			<UL>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%doc</SPAN> is used to mark
+						documentation in the source package that you want installed in a
+						binary install. The documents will be installed in <SPAN
+							CLASS="SYSTEMITEM">/usr/doc/$NAME-$VERSION-$RELEASE</SPAN>. You
+						can list multiple documents on the command line with this macro,
+						or you can list them all separately using a macro for each of
+						them.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%config</SPAN> is used to mark
+						configuration files in a package. This includes files like
+						sendmail.cf, passwd, etc. If you later uninstall a package
+						containing config files, any unchanged files will be removed and
+						any changed files will get moved to their old name with a <SPAN
+							CLASS="SYSTEMITEM">.rpmsave</SPAN> appended to the filename.
+						You can list multiple files with this macro as well.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%dir</SPAN> marks a single directory in
+						a file list to be included as being owned by a package. By
+						default, if you list a directory name <EM>WITHOUT</EM> a <SPAN
+							CLASS="SYSTEMITEM">%dir</SPAN> macro, <EM>EVERYTHING</EM> in
+						that directory is included in the file list and later installed as
+						part of that package.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%defattr</SPAN> allows you to set
+						default attributes for files listed after the defattr declaration.
+						The attributes are listed in the form <EM>(mode, owner,
+							group)</EM> where the mode is the octal number representing the bit
+						pattern for the new permissions (like <B CLASS="COMMAND">chmod</B>
+						would use), owner is the username of the owner, and group is the
+						group you would like assigned. You may leave any field to the
+						installed default by simply placing a <EM>-</EM> in its place,
+						as was done in the mode field for the example package.
+					</P></LI>
+				<LI><P>
+						<SPAN CLASS="SYSTEMITEM">%files -f &#60;filename&#62;</SPAN>
+						will allow you to list your files in some arbitrary file within
+						the build directory of the sources. This is nice in cases where
+						you have a package that can build it's own filelist. You then just
+						include that filelist here and you don't have to specifically list
+						the files.
+					</P></LI>
+			</UL>
+			<P>
+				The <EM>biggest caveat</EM> in the file list is listing directories.
+				If you list <SPAN CLASS="SYSTEMITEM">/usr/bin</SPAN> by accident,
+				your binary package will contain <EM>every</EM> file in <SPAN
+					CLASS="SYSTEMITEM">/usr/bin</SPAN> on your system.
+			</P>
+			<h1 id="par-11">Changelog</h1>
+			<P>This is a log of what changes occurred when the package is
+				updated. If you are modifying an existing RPM it is a good idea to
+				list what changes you made here.</P>
+			<P>The format is simple. Start each new entry with a line with a
+				* followed by the date, your name, and your email address. The date
+				should appear in the same format that is output by:</P>
+			<TABLE BORDER="0" BGCOLOR="#E0E0E0" WIDTH="100%">
+				<TR>
+					<TD><FONT COLOR="#000000"> <PRE>
+date +"%a %b %d %Y"
+        	</PRE>
+					</FONT></TD>
+				</TR>
+			</TABLE>
+			<p>The rest of the section is a free text field, but should be
+				organized in some coherent manner.</p>
+		</div>
+    </div>
+</BODY>
+</HTML>

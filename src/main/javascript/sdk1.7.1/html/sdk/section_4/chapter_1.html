@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+  <link rel="import" href="html/desktopapp/ip.txt">
+  <script>
+      function loadIP() {
+          $("#IP_addr").load("/html/desktopapp/ip.html");
+      }
+  </script>
+
+  <style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    }                                                                          
+  </style>                                                                     
+</head>
+
+<body onload='loadIP()'>
+  <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+    <h1 id="par-1">Overview</h1>
+    Various components of the SDK can be installed onto a Luxe terminal.  This includes
+	the SDK documentation and many of the development tools.
+	
+	<h1 id="par-2">Luxe SDK Installation Package</h1>
+	The Luxe SDK Installation package includes:
+	<ul>
+	  <li> A set of HTTP API Documentation pages linked to the main URL <span id='IP_addr'></span>
+	  <li>  A set of HTTP API test pages with Imbedded JavaScript linked to the documentation pages
+	  <li>  A set of HTTP API functions that are required by PageBuilder and available for developers to use
+	  <li>  A dedicated developer's account and home directory on the terminal
+	  <ul>
+	        <li>User name viking
+	        <li>Default password skeid
+	        <li>Home directory  /home/viking
+	  </ul>
+	  	<li>webdav is enabled to allow the developer's computer to browse / read / write files to the Luxe
+	</ul>
+		After installing the SDK onto a Luxe terminal, there will be a number of HTTP API documentation and test pages on the Luxe's web server and some extra developer HTTP API's that are required for the operation of PageBuilder.
+	<h1 id="par-3">Luxe SDK Terminal Directory Structure</h1>
+	<p>
+	<table>
+	  <tr>
+	    <td class="codeBlock">
+	      <pre>
+	/home
+	  |
+	  +-- /sdk
+	  |    |
+	  |    +-- /bin
+	  |    |
+	  |    +-- /cgi-bin
+	  |    |
+	  |    +-- /files
+	  |    |
+	  |    +-- /html
+	  |         |
+	  |         +-- index.html		<-- This is the main SDK web home page.
+	  |         +-- styles.css		<-- SDK page styles are defined in here
+	  |         +-- /images/*		<-- This directory contains common images used by the SDK pages
+	  |         |
+	  |         +-- /file/*			<-- This directory contains documentation and test pages for the file/* HTTP API functions 
+	  |         +-- /package/*		<-- This directory contains documentation and test pages for the package/* HTTP API functions
+	  |         +-- /page/*			<-- This directory contains documentation and test pages for the page/* HTTP API functions
+	  |         +-- /prompt/*		<-- This directory contains documentation and test pages for the prompt/* HTTP API functions
+	  |         +-- /variable/*		<-- This directory contains documentation and test pages for the variable/* HTTP API functions
+	  |         +-- /pagebuilder/*		<-- This directory contains the PageBuilder JavaScript application and documentation
+	  |    
+	  +-- /viking				<-- This is the location for VAR development code
+	  |    |
+	  |    +-- /bin				<-- Application binaries
+	  |    |
+	  |    +-- /cgi-bin			<-- Application API to be exposed to other systems
+	  |    |
+	  |    +-- /files			<-- Files that may be read by the file/get HTTP API
+	  |    |
+	  |    +-- /html			<-- HTML pages that can be shown via the page/show HTTP API
+	  |         |
+	      </pre>
+	
+	    </td>
+	  </tr>
+	</table>
+	</p>
+	When the SDK package is installed onto the Luxe terminal, a soft link is created in the web server root /var/run/www/index.html which points to the SDK's main index page at location /home/sdk/html/index.html.  This allow a developer to browse to the terminal's URL at http://URL and the terminal's web server will reply with the SDK main index page.
+	<h2 id="sub-par-2-1">/home/sdk/html pages</h2>
+	<h2 id="sub-par-2-2">/home/sdk/bin files</h2>
+	This directory contains some "helper" functions that are required by some of the SDK functions.
+	<table>
+	  <tr>
+	    <th>Name</th>
+	    <th>Description</th>
+	  </tr>
+	
+	  <tr>
+	    <td>install.sh</td>
+	    <td>This is called by the cgi-bin package/install function to parse an uploaded developer's .TAR package file.  It will untar the file and run the enclosed installPackage.sh BASH shell script.
+	
+	<b><i>NOTE:  As the installPackage.sh will run as user u_webserver in group gr_webserver, this user/group must have the necessary permissions to execute the commands in the installPackage.sh script.</i></b></td>
+	  </tr>
+	
+	  <tr>
+	    <td>mac</td>
+	    <td>This function calculates the MAC of a binary file using a supplied encryption key.</td>
+	  </tr>
+	</table>
+	<h2 id="sub-par-2-3">/home/sdk/cgi-bin files</h2>
+	<table>
+	  <tr>
+	    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Location&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+	    <th>Description</th>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/dir</td>
+	    <td>/home/sdk/cgi-bin/file/dir</td>
+	    <td>This function returns a directory of files within the /home/sdk/files/projects area.</td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/put</td>
+	    <td>	/home/sdk/cgi-bin/file/put</td>
+	    <td>This is a C binary that implements an enhanced file/put command that is required for PageBuilder.  It supports the POST'ing of files in multipart-form, application/json, and text/xml formats.  The POST'd files are stored within the /home/sdk/files/ directory subsystem.</td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/get</td>
+	    <td>	/home/sdk/cgi-bin/file/get</td>
+	    <td> </td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/copy</td>
+	    <td>	/home/sdk/cgi-bin/file/copy</td>
+	    <td> </td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/rename</td>
+	    <td>/home/sdk/cgi-bin/file/rename</td>
+	    <td> </td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/file/delete </td>
+	    <td>	/home/sdk/cgi-bin/file/delete </td>
+	    <td> </td>
+	  </tr>
+	
+	  <tr>
+	    <td>http://URL/cgi-bin/sdk/package_sdk/load </td>
+	    <td>/home/sdk/cgi-bin/package_sdk/load </td>
+	    <td>This is a special SDK version of the package/load HTTP API for software developers.  This version can install non-signed software into the developer's terminal and it uses a simplified packaging format.  The production package/load expects a signed .RPM format file which includes the pre an post installation instructions to be included as a SPEC file withing the .RPM.
+	<p>
+	The developer's packing format is a simple .TAR file that contains the files to be installed / upgraded, and a "special" file named installPackage.sh that contains the necessary pre and post installation instructions as a simple BASH script. </td>
+	  </tr>
+	</table>
+	<hr>
+	<p>
+	<font size="-2">This page is located in /home/sdk/html/section_4/chapter_1.html</font>
+	<p>
+    </div>
+</div>
+</body>
+</html>

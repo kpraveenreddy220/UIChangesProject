@@ -1,0 +1,611 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+  <script>
+      $(function(){
+//          $("#IP_addr").load("/html/desktopapp/ip.html");
+          $("#IP_addr1").load("/html/desktopapp/ip.html", function(string) {
+          var ip = string.match(/'([^']+)'/)[1];
+          $("#IP_addr1").html(ip);
+          $("#IP_addr2").html(ip);
+          $("#IP_addr3").html(ip);
+          $("#IP_addr4").html(ip);
+          });
+      });
+
+   function XXpageShow(path){
+            $( "#result" ).html( "" );
+            $.ajax(
+                {
+                    url: '/cgi-bin/page/show',
+                    data: path,
+                    async: false,
+                    success: function( data ) {
+                        esc_data=htmlEscape(data);
+                        $( "#result" ).html( "<pre>" + esc_data + "</pre>" );
+                    },
+                    dataType: "text"
+                }
+            );
+          }
+
+  </script>
+
+  <style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    }                                                                          
+    .commandBlock {
+        background-color: PaleGreen;
+        font-family: 'Courier New';
+    }
+  </style>                                                                     
+</head>
+
+<body>
+   <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+    	<h1 id="par-1">Overview</h1>
+    	This chapter contains the necessary C/C++ library documentation and tools to allow a software developer
+		to write code that will run <b><i>natively under Linux on the Luxe terminal</i></b>
+		<ul>
+		  <li><a href='/html/sdk/documentation/Luxe_Application_Programmers_Guide.pdf'>Luxe Application Programmers Guide</a>
+		  <li><a href='http://nbsps.ca/luxe/sdk/resources/toolchain_phoenix_linux_0.4.0.tar.bz2'>Linux cross compiler</a> and documentation
+		  <li>Windows cross compiler environment documentation (may use a Windows VM running Linux)
+		  <li>Native Luxe compiler that runs directly on the Luxe Linux system <a href='http://newall.ca/luxe/sdk/chapter_4.html'>(</a>still under investigation)
+		to determine if this is feasible)
+		</ul>
+		<p>
+		There are two API's available to the C/C++ developer
+		<ol>
+		  <li>High Level - HTTP API
+		  <li>Low Level - Platform API
+		</ol>
+		<h2 id="sub-par-1-1">High Level - HTTP API</h2>
+		This assumes that the terminal contains the full Equinox middleware software and the developer's C/C++ code
+		interacts with the Equinox middleware using the exposed HTTP API.  This takes full advantage
+		of the Payment Engine to greatly simplify card payment applications.
+		<h2 id="sub-par-1-2">Low Level - Platform API</h2>
+		This API assumes that the developer does not require the Equinox middleware and will 
+		interact with the Luxe device through the native platform API.  The developer's
+		software only requires access to the PCI certified PINpad functions, the EMV certified contact
+		and contactless kernels, and low level access to the Luxe's hardware (I/O ports, display, etc).
+		For an overview of the API, please see <a href='../platform-libs-doc'>the platform library documentation.</a>
+       <h1 id="par-2">GNU Compiler Collection - Cross Compiler</h2>
+       The Equinox Luxe specific version of the GCC cross compiler 
+		<a href='http://nbsps.ca/luxe/sdk/resources/toolchain_phoenix_linux_0.4.0.tar.bz2'>
+		tar.bz2 may be loaded from here</a>. 
+		<h2 id="sub-par-2-1">Installing the Cross Compiler Toolchar</h2>
+		Extract the package and install into the /opt directory of your 64 bit Linux build machine.  The recommended
+directory is /opt/arm-phoenix<p>
+The following is an example of commands to issue (as a root user) to install the compiler toolchain<p>
+<table><tr><td class="commandBlock"><pre>
+root@aspire:/# cd /opt
+root@aspire:/opt#
+root@aspire:/opt# mkdir arm-phoenix
+root@aspire:/opt# ls
+arm-phoenix
+root@aspire:/opt#
+
+root@aspire:/opt# cd arm-phoenix/
+root@aspire:/opt/arm-phoenix# ls
+root@aspire:/opt/arm-phoenix#
+
+root@aspire:/opt/arm-phoenix# curl -L -o toolchain.tar.bz2 http://nbsps.ca/luxe/sdk/resources
+/toolchain_phoenix_linux_0.4.0.tar.bz2
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 53.4M  100 53.4M    0     0  9887k      0  0:00:05  0:00:05 --:--:-- 10.6M
+root@aspire:/opt/arm-phoenix# ls -al
+total 54776
+drwxr-xr-x 2 root root     4096 Mar 21 15:02 .
+drwxr-xr-x 3 root root     4096 Mar 21 14:56 ..
+-rw-r--r-- 1 root root 56078527 Mar 21 15:02 toolchain.tar.bz2
+root@aspire:/opt/arm-phoenix# 
+
+root@aspire:/opt/arm-phoenix# tar -vxjf toolchain.tar.bz2
+...
+...
+...
+...
+./libexec/gcc/arm-equinox-linux-gnueabi/4.9.3/install-tools/mkinstalldirs
+./libexec/gcc/arm-equinox-linux-gnueabi/4.9.3/install-tools/fixinc.sh
+./libexec/gcc/arm-equinox-linux-gnueabi/4.9.3/install-tools/fixincl
+root@aspire:/opt/arm-phoenix# 
+
+root@aspire:/opt/arm-phoenix# ls -al
+total 56592
+drwxr-xr-x 8 2000 2000     4096 Feb 22  2016 .
+drwxr-xr-x 3 root root     4096 Mar 21 14:56 ..
+drwxr-xr-x 6 2000 2000     4096 Feb 22  2016 arm-equinox-linux-gnueabi
+drwxr-xr-x 2 2000 2000     4096 Feb 22  2016 bin
+-rw-r--r-- 1 2000 2000  1831403 Feb 22  2016 build.log.bz2
+drwxr-xr-x 3 2000 2000     4096 Feb 22  2016 include
+drwxr-xr-x 4 2000 2000     4096 Feb 22  2016 lib
+drwxr-xr-x 3 2000 2000     4096 Feb 22  2016 libexec
+drwxr-xr-x 4 2000 2000     4096 Feb 22  2016 share
+-rw-r--r-- 1 root root 56078527 Mar 21 15:02 toolchain.tar.bz2
+root@aspire:/opt/arm-phoenix#
+</pre>
+</td>
+</tr>
+</table>
+<p>
+After installation, the directory /opt/arm-phoenix/ should resemble:-<p>
+<table><tr><td class="commandBlock"><pre>
+steve@ChrUbuntu:/$ ls -al /opt/arm-phoenix/
+total 1836
+drwxr-xr-x 8 steve steve    4096 Aug  8 13:54 .
+drwxr-xr-x 4 root  root     4096 Aug  8 13:35 ..
+drwxr-xr-x 6 root  root     4096 Aug  8 13:54 arm-equinox-linux-gnueabi
+drwxr-xr-x 2 steve steve    4096 Aug  8 13:54 bin
+-rw-r--r-- 1 root  root  1831403 Aug  8 13:54 build.log.bz2
+drwxr-xr-x 3 root  root     4096 Aug  8 13:54 include
+drwxr-xr-x 4 steve steve    4096 Feb 22 10:00 lib
+drwxr-xr-x 3 root  root     4096 Aug  8 13:54 libexec
+drwxr-xr-x 4 root  root     4096 Aug  8 13:54 share
+</pre></td></tr></table>
+<br/>
+
+To verify that the installation completed sucessfully, try to cross compile a simple program
+hello.c (click <a href='hello.c'> here </a> to download a copy).
+<table> <tr> <td class="codeBlock"> <pre>
+#include &lt;stdio.h&gt;
+
+int main(int argc, char** argv) {
+    printf( "Hello, world\n");
+    return 0;
+}
+</pre></td></tr></table>
+
+<br/>To compile the above program, a suiteable Makefile would be as follows: (Click <a href='Makefile'> here </a> to download a copy).
+<table> <tr> <td class="codeBlock"> <pre>
+TOOLCHAIN=/opt/arm-phoenix/bin/arm-equinox-linux-gnueabi
+
+CFLAGS=-g -Wall
+CC=$(TOOLCHAIN)-gcc
+AR=$(TOOLCHAIN)-ar
+RANLIB=$(TOOLCHAIN)-ranlib
+
+all: hello
+
+hello: hello.o
+	@echo Making hello using compiler $(CC)
+	$(CC) hello.o -o hello ${LIBS}
+
+clean:
+	rm -f *.o *.a hello
+</pre></td></tr></table>
+<br/>
+
+Running <b><i>make</i></b> on the build computer should generate output similar to:-
+<table><tr><td class="commandBlock">
+<pre>
+steve@ChrUbuntu:~/workspace$ <span style="text-decoration: underline;">make</span><br/>
+/opt/arm-phoenix/bin/arm-equinox-linux-gnueabi-gcc -g -Wall   -c -o hello.o hello.c
+Making hello using compiler /opt/arm-phoenix/bin/arm-equinox-linux-gnueabi-gcc
+/opt/arm-phoenix/bin/arm-equinox-linux-gnueabi-gcc hello.o -o hello
+steve@ChrUbuntu:~/workspace$ 
+</pre>
+</td></tr></table>
+<br/>
+
+To verify that the binary executable <span style="font-family: 'Courier New'; font-weight: bold;">hello</span> is correctly compiled, copy the
+compiled binary over to the Luxe development terminal.
+<table><tr><td class="commandBlock"><pre>
+steve@ChrUbuntu:~/workspace$ <span style="text-decoration: underline;">scp hello viking@<span id='IP_addr1'>xxx.xxx.xxx.xxx</span>:bin</span>
+viking@<span id='IP_addr3'></span>'s password: 
+hello                                                                   100% 6960     6.8KB/s   00:00
+steve@ChrUbuntu:~/workspace$ 
+</pre></td></tr></table>
+<br/>
+
+Then log in to the Luxe terminal and run the program
+ <span style="font-family: 'Courier New'; font-weight: bold;">/home/viking/bin/hello</span>
+<table><tr><td class="commandBlock"><pre>
+steve@ChrUbuntu:~/workspace$ <span style="text-decoration: underline;">ssh viking@<span id='IP_addr2'></span></span>
+viking@@<span id='IP_addr4'></span>'s password:
+Last login: Mon Aug  8 12:10:54 2016 from chrubuntu
+
+
+BusyBox v1.24.1 () built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+viking@Luxe_C1617003000033 ~$ bin/hello
+Hello, world
+viking@Luxe_C1617003000033 ~$ 
+</pre></td></tr></table>
+
+	<h2 id="sub-par-2-2">Luxe Header Files and Libraries</h2>
+In addition to the standard set of C/C++ header files and libraries that are supplied as
+part of the GNU Compiler Collection, Equinox also supplies a set of user (usr/) header
+files and libraries for the Luxe's add on libraries.  These include support for common
+Linux libraries such as OpenSSL.
+<br>
+The add-ons may be obtained at <a href='http://nbsps.ca/luxe/sdk/resources/arm-phoenix-addons.tar.bz2'>
+arm-phoenix-addons.tar.bz2</a> and should be installed into 
+<span style="font-family: 'Courier New'; font-weight: bold;">/opt/arm-phoenix/addons/.</span>
+<p>
+<br>
+<b>NOTE:</b> The addons may be downloaded using the link above or use the <b><i>curl</i></b>
+command line utility in the example below.
+<p>
+<table><tr><td class="commandBlock"><pre>
+root@aspire:/# cd /opt
+root@aspire:/opt#
+root@aspire:/opt# mkdir arm-phoenix-addons
+root@aspire:/opt# ls
+arm-phoenix  arm-phoenix-addons
+root@aspire:/opt#
+
+root@aspire:/opt# cd arm-phoenix-addons/
+root@aspire:/opt/arm-phoenix-addons# ls
+root@aspire:/opt/arm-phoenix-addons #
+
+root@aspire:/opt/arm-phoenix-addons # <span style="text-decoration: underline;">curl -L -o arm-phoenix-addons.tar.bz2 http://nbsps.ca/luxe/sdk/resources/arm-phoenix-addons.tar.bz2</span>
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 41.0M  100 41.1M    0     0  9887k      0  0:00:05  0:00:05 --:--:-- 10.6M
+root@aspire:/opt/arm-phoenix-addons# ls -al
+total 42016
+drwxr-xr-x 2 root root     4096 Mar 30 15:02 .
+drwxr-xr-x 3 root root     4096 Mar 30 14:56 ..
+-rw-r--r-- 1 root root 43015568 Mar 30 15:02 arm-phoenix-addons.tar.bz2
+root@aspire:/opt/arm-phoenix-addons# 
+
+root@aspire:/opt/arm-phoenix-addons# tar -vxjf arm-phoenix-addons.tar.bz2
+...
+...
+...
+root@aspire:/opt/arm-phoenix-addons# 
+
+root@aspire:/opt/arm-phoenix-addons# ls -al
+total 42020
+drwxr-xr-x 8 2000 2000     4096 Mar 30  2016 .
+drwxr-xr-x 3 root root     4096 Mar 30 14:56 ..
+drwxr-xr-x 6 2000 2000     4096 Mar 30 09:09 arm-phoenix-addons
+-rw-r--r-- 1 root root 56078527 Mar 30 11:08 arm-phoenix-addons.tar.bz2
+root@aspire:/opt/arm-phoenix-addons#
+</pre>
+</td>
+</tr>
+</table>
+<p>
+<br>
+The following is a sample of a Makefile that makes use of teh addones.
+<p>
+<b>NOTE:</b> Notice that the definition and the references to the ADDONS macro.
+
+<table><tr><td class="commandBlock"><pre>
+TOOLCHAIN=/opt/arm-phoenix/bin/arm-equinox-linux-gnueabi
+ADDONS=/opt/arm-phoenix-addons
+
+CC=$(TOOLCHAIN)-gcc
+
+
+nossl: nossl.c
+      $(CC) -I$(ADDONS)/usr/include -L$(ADDONS)/usr/lib -lssl -lcrypto -o $@ $<
+
+withssl: nossl.c
+      $(CC) -I$(ADDONS)/usr/include -L$(ADDONS)/usr/lib -lssl -lcrypto -o $@ $<
+
+all: clean nossl withssl
+      echo Done
+
+clean:
+      rm -f nossl withssl
+</pre>
+</td>
+</tr>
+</table>
+<hr>
+
+<h1 id="par-3">C/C++, Hello, World!</h1>
+This chapter describes the development of the components required to display a simple
+ message on the Luxe's screen.  As the Luxe display is controlled by a web browser
+, the user's software can only display messages on the Luxe screen through the interacti
+on with an HTML web page.
+<p>
+The Luxe terminal contains a web server which is used to handle communications to
+and from the resources of the Luxe terminal, including the Luxe's web browser.
+
+<img src='/html/sdk/assets/images/chapter_3.png'>
+In the above diagram, the VAR's ECR application communicates to the http server (web server)
+ to the various components of the SDK.  For the ECR application to display a message
+ on the Luxe requires two steps.
+<ol>
+  <li/> The ECR application makes an HTTP request to the HTTP API page/show (in in
+<mark style='background-color:red'>red</mark> above) to tell the web browser to display
+ a specific page.  This web page will display static information, such as the page background
+ image which may also contain static text such as a page title).  The HTMl page should also
+ contain embedded JavaScript code that defines one or more areas which may contain dynamic
+ text data.  Of there is at least one dynamic text area (a List Box), then the embedded
+ JavaScript will make an asynchronous JavaScript and XML (Ajax) call to the web server's
+ waitForUpdate function to wait for and process incoming page update requests. 
+ See <a href=' https://en.wikipedia.org/wiki/Ajax_(programming)'>https://en.wikipedia.org/wiki/Ajax_(programming)</a>
+ for more information on Ajax programming.
+  <li/>The ECR application will then make the second HTTP request to the HTTP API
+ page/update shown in <mark style='background-color: lightblue;'>blue</mark> above. to send update
+ information to the web server and on to the web browser application.
+</ol>
+ <p>
+<h2 id="sub-par-3-1">hello_world.html</h2>
+The following HTML page is an example example of a simple page that displays a background image
+ then waits for and prcesses page update requests.
+<table> <tr> <td class="codeBlock"> <xmp>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Pragma" content="no-cache">
+
+    <script type="text/javascript" src="/common/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/common/jphoenix/jphoenix.js"></script>
+    <script type="text/javascript" src="/common/jutils.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="assets/css/styles.css"/>
+
+    <script type="text/javascript">
+        function initPageControls() {
+            registerForEvent("onUpdate", "update", function(name, text, response) {
+                processDivBoxUpdate(text);
+            });
+        }
+    </script>
+</head>
+
+<body onload="initPageControls()">
+        <div id="box1" style="position: absolute; top: 30px; left:  38px; width: 350px; height: 400px; ">Hello</div>
+</body>
+</html>
+
+</xmp></td></tr></table>
+hello_world.html (click <a href='hello_world.html'> here </a> to download a copy).
+You will have to right-click and save as to save this page as it is an HTML page
+as browsers naturally want to show pages that have an extension .html and not save it.<br>
+Next, copy this page into /home/viking/html/hello_world.html<br><!-- TODO: fix with proper function -->
+Then click on this button <button onclick="XXpageShow('path=viking/hello_world.html')">page/show?path=/viking/hello_world.html</button>
+to show the above page on the Luxe terminal.
+<p><br><p>
+<h2 id="sub-par-3-2">hello_world.c</h2>
+The following C code calls the HTTP API page/show to show the above page, then calls the HTTP
+ API page/update to send a message to the page to be displayed.
+
+<table> <tr> <td class="codeBlock"> <pre>
+#include &lt;stdio.h&gt; /* printf, sprintf */
+#include &lt;stdlib.h&gt; /* exit */
+#include &lt;unistd.h&gt; /* read, write, close */
+#include &lt;string.h&gt; /* memcpy, memset */
+#include &lt;sys/socket.h&gt; /* socket, connect */
+#include &lt;netinet/in.h&gt; /* struct sockaddr_in, struct sockaddr */
+#include &lt;netdb.h&gt; /* struct hostent, gethostbyname */
+#include &lt;error.h&gt;
+
+/*
+ * NAME
+ *	hello
+ *
+ * SYNOPSIS
+ *	/home/viking/bin/hello
+ *
+ * DESCRIPTION
+ *	This program is a very simple test to display a "Hello, world!" message
+ *	on the the Luxe 8000i display by calling two HTTP API functions.
+ *
+ *	The first call is to tell the terminal to show a simple HTML page on
+ *	the display that consists of a background image and a single list
+ *	box that can accept a text string:-
+ *		http://127.0.0.1/cgi-bin/page/show?path=viking/hello.html
+ *
+ *	The second call is to send a text string to the page's list box.
+ *		http://127.0.0.1/cgi-bin/page/update
+ *
+ *	Messages are sent to the Luxe's web server (the http daemon) through
+ *	a socket.
+ *	There are many C libraries available to format and send HTTP messages
+ *	to web servers, such as libcurl, libwww, neon, libsoup, etc.  Using 
+ *	one of these libraries can simplify complex HTTP requests.
+ *
+ *
+ *	The following comments and parts of the code are from Jeremy Jeremiah
+ *  as posted to stackoverflow.com
+ *
+ *	An http message has a header part and a message body separated by a
+ *	blank line. The blank line is ALWAYS needed even if there is no
+ *	message body. The header starts with a command and has additional
+ *	lines of key value pairs separated by a colon and a space. If there
+ *	is a message body, it can be anything you want it to be.
+ *
+ *	Lines in the header and the blank line at the end of the header
+ *	must end with a carraige return and linefeed pair (see HTTP header
+ *	line break style) so that's why those lines have \r\n at the end.
+ *	This is NOT the Linux end-of-line, although some (not all) web
+ *	servers will tolerate the Linux end-of-line.
+ *
+ *	A URL has the form of http://host:post/path?query_string
+ *
+ *	There are two main ways of submitting a request to a website:
+ *
+ *	GET: The query string is optional but, if specified, must be
+ *	reasonably short. Because of this the header could just be the
+ *	GET command and nothing else. A sample message could be:
+ *
+ *	    GET /path?query_string HTTP/1.0\r\n
+ *	    \r\n
+ *
+ *	POST: What would normally be in the query string is in the body
+ *	of the message instead. Because of this the header needs to include
+ *	the Content-Type: and Content-Length: attributes as well as the POST
+ *	command. A sample message could be:
+ *
+ *	    POST /path HTTP/1.0\r\n
+ *	    Content-Type: text/plain\r\n
+ *	    Content-Length: 12\r\n
+ *	    \r\n
+ *	    query_string
+ *
+ *	So to send the message the C program needs to:
+ *
+ *	    create a socket
+ *	    lookup the IP address
+ *	    open the socket
+ *	    send the request
+ *	    wait for the response
+ *	    close the socket
+ *
+ *	The send and receive calls won't necessarily send/receive ALL the
+ *	data you give them - they will return the number of bytes actually
+ *	sent/received. It is up to you to call them in a loop and
+ *	send/receive the remainder of the message.
+ *
+ *	What I did not do in this sample is any sort of real error checking.
+ *	When something fails I just exit the program.
+ *
+ * RETURNS
+ *
+ */
+
+
+void httpRequestResponse( char *host, char *message, char *response, int responseMax ) {
+    int sent, total, bytes, received;
+    struct hostent *server;
+    struct sockaddr_in serv_addr;
+    int sockfd;
+    int portno = 80;
+
+    /* create the socket */
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) error(1, 1, "ERROR opening socket");
+
+    /* lookup the ip address */
+    server = gethostbyname(host);
+    if (server == NULL) error(2, 2, "ERROR, no such host");
+
+    /* fill in the structure */
+    memset(&serv_addr,0,sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(portno);
+    memcpy(&serv_addr.sin_addr.s_addr,server->h_addr,server->h_length);
+
+    /* connect the socket */
+    if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0)
+        error(3, 3, "ERROR connecting");
+
+    /* send the request */
+    total = strlen(message);
+    sent = 0;
+    do {
+        bytes = write(sockfd,message+sent,total-sent);
+        if (bytes < 0)
+            error(4, 4, "ERROR writing message to socket");
+        if (bytes == 0)
+            break;
+        sent+=bytes;
+    } while (sent < total);
+
+    /* receive the response */
+    memset(response,0,responseMax);
+    total = responseMax-1;
+    received = 0;
+    do {
+        bytes = read(sockfd,response+received,total-received);
+        if (bytes < 0)
+            error(5, 5, "ERROR reading response from socket");
+        if (bytes == 0)
+            break;
+        received+=bytes;
+    } while (received < total);
+
+    if (received == total)
+        error(6, 6, "ERROR storing complete response from socket");
+
+    /* close the socket */
+    close(sockfd);
+}
+
+int main(int argc, char** argv)
+{
+
+    char *messageGET = "GET /cgi-bin/page/show?path=viking/hello_world.html HTTP/1.0\r\n\r\n";
+
+    char messagePOST[1024];
+
+    char *messagePOSTtext = "&lt;?xml version='1.0' ?&gt;"
+                            "&lt;page&gt;"
+                            "  &lt;update action='append' id='box1'&gt;"
+                            "  &nbsp;&nbsp;&lt;text&gt;, world!&lt;/text&gt;"
+                            "  &lt;/update&gt;"
+                            "&lt;/page&gt;";
+
+    char *messagePOSTfmt = "POST /cgi-bin/page/update HTTP/1.0\r\n"
+                           "Content-Type: text/xml\r\n"
+                           "Content-Length: %d\r\n"
+                           "\r\n"
+                           "%s";
+    char response[4096];
+
+
+    /*
+     * send the first request (GET) to display the HTML page
+     * and process response
+     */
+    httpRequestResponse( "127.0.0.1", messageGET, response, sizeof(response) );
+    printf("Response:\n%s\n",response);
+
+
+    /*
+     * Now send the POST request to send the text to display
+     * and process response
+     */
+    sprintf(messagePOST, messagePOSTfmt, strlen(messagePOSTtext), messagePOSTtext);
+    httpRequestResponse( "127.0.0.1", messagePOST, response, sizeof(response) );
+    printf("Response:\n%s\n",response);
+
+    return 0;
+}
+
+
+</pre></td></tr></table>
+Click <a href='hello_world.c'> here </a> to download a copy of hello_world.c. If you rename this
+to hello.c you may use the same Makefile as the first hello.c example.  If you wish to keep this
+named hello_world.c then use the above Makefile and simply change the name of the component
+inside the Makefile from <b><i>hello</i></b> to <b><i>hello_world</i></b>.
+<hr/>
+<font size="-2">This page is located in /home/sdk/html/section_4/chapter_5.html</font>
+<p>
+    </div>
+</div>    
+</body>
+</html>

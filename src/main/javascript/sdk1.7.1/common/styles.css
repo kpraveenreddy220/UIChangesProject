@@ -1,0 +1,22 @@
+/* ApplicationBuilder mandatory styles  */
+body, html {
+    height: 100%;
+    margin: 0;
+}
+.control-area {
+    /*border:1px dotted #acb1a5;*/
+}
+/* End of ApplicationBuilder mandatory styles  */
+
+/* Default styles to be registered in /home/sdk/files/project/projectCfg.json */
+/*NOTE: sample styles */
+.style1cssClassSample {
+    font-size: 16px;
+}
+
+.style2cssClassSample {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/*production styles starts here*/

@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+<link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+  <link rel="import" href="html/desktopapp/ip.txt">
+<TITLE>Controlling the Application Startup</TITLE>
+<style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 10px;
+    }
+    th {
+      height: 20px;
+      vertical-align: middle;
+    }
+  </style>
+</HEAD>
+<BODY CLASS="SECT1" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#840084" ALINK="#0000FF">
+ <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+<div class="container-fluid">
+	 <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+    	<h1 id="par-1">Startup Overview</h1>
+    When the Luxe system boots, a system daemon named tm-core scans the various sub-directories
+ under the /home directory to create a list of applications.
+<p>
+Each application may define the resources and how it should be started up through a file
+ called app.conf that should be in the root of the application's directory.  
+For example, the application viking should have a control file in
+<pre> /home/viking/app.conf</pre>
+<p>The syntax for this <xml> format file follows
+
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</pre>
+This is a first line of the file.
+<p>&nbsp;<p>
+
+<pre>&lt;application&gt;</pre>
+This is the outer enclosing tag.
+<p>&nbsp;<p>
+<pre>&lt;home_button form="desktop/index.html"/&gt;</pre>
+There can only be ONE app.conf that specifies this tag.  This is the HTML page that will be
+ shown when the home button ( magnifying glass + 0 + 0 ) is pressed. The attribute "form"
+ specifies the path that is passed to the page show function.<p>
+ For example, <b><i>page/show?path=desktop/index.html</i></b> will show the page
+ /home/desktop/html/index.html on the display.
+<p>&nbsp;<p>
+
+<pre>&lt;autolaunch path="/home/sdkdemo/appfcgi -d" default_form="html/index.html"/&gt;</pre>
+autolaunch path=
+If an application needs to run an executable on a boot up, the autolaunch path= attribute
+ specifies the location of the binary and any parameters required by the binary.<p>
+  This may be used to run daemons such as an application that requires a FastCGI
+ interface to the web server.<p>
+autolaunch form=
+There must only be ONE app.conf that specifies an autolaunch form= attribute.  This
+ specifies the HTML page that will be shown when the terminal boots.<p>
+The attribute "form" specifies the path that is passed to the page show function.<p>
+For example, <b>form="desktop/index.html"</b> will call page/show?path=desktop/index.html
+ to show the page /home/desktop/html/index.html on the display.
+
+<p>&nbsp;</p>
+<pre>&lt;desktop_item form="app/index.html" caption="Point of Sale" icon="files/pos.png" icon_position="top left"/&gt;</pre>
+More than one application may include a <desktop_item> tag.  If an application would like to
+ appear on the Desktop, it should include a <desktop_item> tag in its app.conf file.<p>
+The desktop manager will display the icon specified in the "icon" attribute along with
+ the brief description specified by the "caption" attribute.<p>
+  The Desktop manager will enable a touch input area that will show the page specified
+ by the attribute "form" which specifies the path that is passed to the page show function
+ when the desktop icon selected .<p>
+For example, <b>page/show?path=setup/index.html</b> will show the page /home/setup/html/index.html
+ on the display.
+
+<p>&nbsp;<p>
+<pre>&lt;setup_item form="pinpad/setup.html"/&gt;</pre>
+More than one application may include a <setup_item> tag.  If an application can be
+ configured by a common setup application, it should put the path of its setup page
+ in the file.
+
+<p>&nbsp;<p>
+<pre>&lt;resources>resources/resources.xml&lt;/resources&gt;</pre>
+If an application has secure resources to load into MQX on a boot up, this tag define the
+ location of a file that specifies the list of resources to load.
+<p>&nbsp;<p>
+
+<pre>&lt;prompts&gt;resources/prompts.json&lt;/prompts&gt;</pre>
+Although we could simply state that applications that want to specify application
+ specific prompts must put them into their applications resources directory,
+ such as /home/APP_NAME/resources/prompts.json, as we have a tag for the secure
+ resources <resources>, to be consistent and to allow for prompts to be in either
+ the resources/ or files/ directory, the <prompts> tag is used to specify the
+ location of the prompts file.
+
+<p>&nbsp;<p>
+<pre>&lt;card_ranges>resources/card_ranges.xml&lt;/card_ranges&gt;</pre>
+<pre>&lt;white_list signature=... &gt;whitelist.xml&lt;/white_list&gt;</pre>
+These xml tags are used by the payment engine to determine the encryption
+ schemes that are applied to a card PAN.
+
+<p>&nbsp<p>
+Other EMV Configuration XML file(s)
+<p>
+<pre>&lt;app_specific_tags&gt;&lt;/app_specific_tags&gt;</pre>
+Each application may have their own specific tags that only it requires. 
+
+<hr>
+<p>
+<font size="-2">This page is located in /home/sdk/html/section_4/chapter_8.html</font>
+	</div>
+</div>
+</BODY>
+</HTML>

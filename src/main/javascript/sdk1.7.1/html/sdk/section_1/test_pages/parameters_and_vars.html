@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap-theme.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/ace.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/ext-static_highlight.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/mode-xml.js"></script>
+    <!--<script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/mode-javascript.js"></script>-->
+    <!--<script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/theme-monokai.js"></script>-->
+    <script type="text/javascript" charset="utf-8" src="/html/sdk/components/ace-builds-18.06.17/src-min-noconflict/theme-chrome.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+    <script type="text/javascript">
+        function onGetVariable() {
+            var url = terminalHostname + "/cgi-bin/variable/get";
+            var httpRequestType = "GET";
+            var varName = $("#getVarName").val();
+            $.ajax({ type : httpRequestType,
+                url: url,
+                data : varName,
+                dataType: "text",   //have to do 'text' in order to show raw response
+                success : function(response) {
+                    $("#getVarRequest").text(httpRequestType + " " + url + "?" + varName);
+                    $("#getVarResponse").text(response);
+
+                    var $xml = parseXML(response);
+                    if($xml) {
+                        var $variable = $xml.find("variable");
+                        var $get = $variable.find("get");
+                        if (varName) {
+                            $("#getVarValue").text($get.text());
+                        }
+                        doHighlightByIds(["getVarRequest", "getVarResponse"]);
+                    }
+                }
+            });
+        }
+        function onPutVariable() {
+            var url = terminalHostname + "/cgi-bin/variable/set";
+            var httpRequestType = "POST";
+            var varName = $("#putVarName").val();
+            var varValue = $("#putVarValue").val();
+            var httpRequestBody =
+                    '<?xml version="1.0"?>\n' +
+                    '<variable>\n'+
+                    '<set id="' + varName + '">' + varValue + '</set>\n' +
+                    '</variable>';
+            $.ajax({ type : httpRequestType,
+                url: url,
+                data : httpRequestBody,
+                dataType: "text",   //have to do 'text' in order to show raw response
+                success : function(response) {
+                    $("#putVarRequest").text(httpRequestType + " " + url);
+                    $("#putVarRequestBody").text(httpRequestBody);
+                    $("#putVarResponse").text(response);
+
+//                    var $xml = parseXML(response);
+//                    if($xml) {
+//                        var $variable = $xml.find("variable");
+//                        var $get = $variable.find("get");
+//                        doHighlightByIds(["putVarRequest", "putVarRequestBody", "putVarResponse"]);
+//                    }
+                    doHighlightByIds(["putVarRequest", "putVarRequestBody", "putVarResponse"]);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-2 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-10">
+        <h1 id="par-1">Variable functions</h1>
+        <h2 id="sub-par-1-1">Get variable</h2>
+        <div class="featurette">
+            <div class="function-explanation">This function returns registry variable value</div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="getVarName">Variable name</label>
+                    <input type="text" class="form-control" id="getVarName" placeholder="enter variable name">
+                </div>
+                <button type="button" class="btn btn-default" onclick="onGetVariable()">Send</button>
+                <div class="form-group" style="margin-left: 10px;">
+                    <label for="getVarValue">Variable value</label><span id="getVarValue" style="margin-left: 5px;"></span>
+                </div>
+            </form>
+
+            <div style="margin-top: 5px;">
+                <b>HTTP Request</b>
+                <pre id="getVarRequest" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+
+                <b>HTTP Response</b>
+                <pre id="getVarResponse" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+            </div>
+        </div>
+        <h2 id="sub-par-1-2">Put variable</h2>
+        <div class="featurette">
+            <div class="function-explanation">This function sets registry variable value</div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="putVarName">Variable name</label>
+                    <input type="text" class="form-control" id="putVarName" placeholder="enter variable name">
+                </div>
+                <div class="form-group" style="margin-left: 10px;">
+                    <label for="putVarValue">Variable value</label></span>
+                    <input type="text" class="form-control" id="putVarValue" placeholder="enter variable value">
+                </div>
+                <button type="button" class="btn btn-default" onclick="onPutVariable()">Send</button>
+            </form>
+
+            <div style="margin-top: 5px;">
+                <b>HTTP Request</b>
+                <pre id="putVarRequest" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+                <b>HTTP Request body</b>
+                <pre id="putVarRequestBody" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+
+                <b>HTTP Response</b>
+                <pre id="putVarResponse" class="highlight-code" ace-mode="ace/mode/xml" ace-theme="ace/theme/chrome" ace-gutter="true"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

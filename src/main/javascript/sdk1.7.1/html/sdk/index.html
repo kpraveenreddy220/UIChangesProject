@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+
+    <!--<script type="text/javascript" src="/common/jphoenix.js"></script>-->
+    <!--<script type="text/javascript" src="/common/jutils.js"></script>-->
+
+</head>
+<body>
+<!--<nav class="navbar-fixed-top" style="height: 40px; line-height: 40px; background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%;">-->
+<nav style="height: 40px; line-height: 40px; background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: top; margin: 9px;">
+        <span style="font-family: sans-serif; font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit
+            <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+            <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+        </span>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+        <h1 id="par-1">Overview</h1>
+        <p>This Luxe terminal has the developer's Software Development Kit (SDK) installed. The Developer's SDK Terminal contains documentation, tools, and test pages for the Equinox Luxe SDK.</p>
+        <p>The SDK documentation contains the following sections.  Either select the section by clicking on the section links or select the quick links that go directly to the documenation, tool, or test pages</p>
+
+        <h1 id="par-2">HTTP API</h1>
+        <p>This section of the SDK contains the HTTP API interface specification and a set of web pages to allow a software
+            developer to write and test code that will run <b><i>externally to the Luxe</i></b>
+            on the <b><i>developer's POS / ECR system</i></b> and communicate to the connected Luxe device through
+            an IP connection using the HTTP API.</p>
+        <ul>
+            <li>Luxe HTTP API Specification - <a href='/html/sdk/documentation/Luxe_HTTP_API_Specification.pdf'>Documentation</a>
+                and <a href='/html/sdk/section_1/test_pages.html'>Test Pages</a>
+        </ul>
+
+        <h1 id="par-3">Payment Engine Integration</h1>
+        <p>This section describes the Equinox Payment Engine and expands on the usage of the HTTP API payment specific commands emv/start and emv/continue</p>
+        <ul>
+            <li/>Luxe Integration Guide - <a href='/html/sdk/documentation/Luxe_Integration_Guide.pdf'>
+            Documentation</a> and <a href='/html/sdk/section_2/test_pages.html'>Test Pages</a>
+            <li/>Sample ECR Application - Demonstrates <a href='http://nbsps.ca/luxe/sdk/resources/sampleECRapplication.zip'>EMV Automation</a>
+        </ul>
+
+        <h1 id="par-4"><a href="/html/sdk/section_3/index.html">SDK Tools</a></h1>
+        <p>This is the list of SDK provided tools</p>
+        <ul>
+            <!--<li>Luxe Application Administration <a href='javascript:open800x480window();'>-</a> <a href='javascript:openApplicationAdminTool();'>Tool</a></li>-->
+            <li>
+                Luxe AppBuilder <a href='javascript:open800x480window();'>-</a> <a href='/html/sdk/documentation/Luxe_PageBuilder_User_Guide.pdf'>Documentation</a> and <a href='javascript:gotoAppBuilder();'>Tool</a>. Some of the functionality are
+                <ul>
+                    <li>Build application HTML pages (including css and javascripts)</li>
+                    <li>Debug application HTML pages</li>
+                    <li>Debug application HTML pages</li>
+                    <li>Application Administration</li>
+                    <li>Secure resource signing</li>
+                </ul>
+            </li>
+            <li>Luxe SPDKit - Local Key Injection <a href='/html/sdk/documentation/Luxe_SPDKit_User_Guide.pdf'>Documentation</a> and Windows PC based <a href='/html/sdk/documentation/spdkit.files/SPDKit.exe'>Tool</a></li>
+            <li>Local Key Injection - <a href='/html/sdk/documentation/Luxe_LKI_Getting_Started.pdf'>LKI Getting Started Guide</a> and <a href='/cgi-bin/platform/key?function=local'>Start the Local Key Injection Mode</a></li>
+            <li>SimPOS+ - <a href='/html/sdk/documentation/SimPOS+_QuickStartGuide.pdf'>Documentation</a> and <a href='http://nbsps.ca/luxe/sdk/resources/EQX_SimPOS-1.0.19_Release.zip'>POS Simulator Tool</a></li>
+            <li>Luxe ResourceSigner - <a href='/html/sdk/section_3/tools/resourcesigner'>Tool</a></li>
+            <li>Luxe Software Package Installation Creator - <a href='/html/sdk/section_3/tools/installationcreator'>Tool</a></li>
+            <li>Luxe Software Package Installer - <a href='/html/sdk/section_3/tools/packageinstaller'>Tool</a></li>
+            <li>Luxe Certification - <a href='/html/sdk/documentation/Luxe_Certifications.pdf'>Status Letter and LOA's</a></li>
+        </ul>
+
+        <h1 id="par-5">Application Programmer's Guide</h1>
+        <p>To assist developers in creating HTML pages and writing & testing code for running
+            either on their Point of Sale computer or for running <b><i>natively</i></b> on the
+            Luxe (JavaScript and/or C/C++) Equinox supplies an SDK package for installation on a Luxe
+            terminal.  (This terminal has the Developer's SDK installed).
+        </p>
+        <p>This section contains the necessary HTML/JavaScript and C/C++ documentation and tools to allow a software
+        developer to write code that will run directly <b><i>on the Luxe</i></b></p>
+        <h2 id="sub-par-5-1"><small><a href='/html/sdk/section_4/chapter_1.html'>Chapter 1 - Overview</a></small></h2>
+        <h2 id="sub-par-5-2"><small><a href='/html/sdk/section_4/chapter_2.html'>Chapter 2 - Connecting to the Luxe SDK Terminal</a></small></h2>
+        <h2 id="sub-par-5-3"><small><a href='/html/sdk/section_4/chapter_3.html'>Chapter 3 - Creating and Loading Secure Prompt Resources</a></small></h2>
+        <h2 id="sub-par-5-4"><small><a href='/html/sdk/section_4/chapter_4.html'>Chapter 4 - HTML/JavaScript Application Development</a></small></h2>
+        <h2 id="sub-par-5-5"><small><a href='/html/sdk/section_4/chapter_5.html'>Chapter 5 - C/C++ Application Development</a></small></h2>
+        <h2 id="sub-par-5-6"><small>Chapter 6 - SQLite Database</small></h2>
+        <h2 id="sub-par-5-7"><small>Chapter 7 - Integration with Equinox Payment Engine</small></h2>
+        <h2 id="sub-par-5-8"><small><a href='section_4/chapter_8.html'>Chapter 8 - Controlling the Application Startup</a></small></h2>
+        <h2 id="sub-par-5-9"><small><a href='/html/sdk/section_4/chapter_9.html'>Chapter 9 - Creating a Software Installation Package</a></small></h2>
+    <hr>
+	<p>
+		<font size="-2">This page is located in /home/sdk/html/index.html</font>
+    </div>
+</div>
+</body>
+</html>
