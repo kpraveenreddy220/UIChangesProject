@@ -1,5 +1,5 @@
 //var terminalHostname = "http://localhost";
-var terminalHostname = "http://192.168.10.202";
+var terminalHostname = "http://192.168.152.3";
 
 $(document).ready(function() {
     var sidebarMainMenu = $('#sidebar-menu .main-menu');
@@ -33,6 +33,20 @@ $(document).ready(function() {
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
     });*/
+    $(document).on('submit', '.resourceSigner', function(e) {
+    	var form = $('#resourceSigner')[0]; 
+    	var formData = new FormData(form);
+        $.ajax({
+           url: $(this).attr('action'),
+           type: $(this).attr('method'),
+           contentType: $(this).attr('enctype'),
+           data: formData,
+           success: function(html) {
+        	   alert('ok');
+           }
+       });
+       e.preventDefault();
+   });
 });
 
 //$(document).ready(function() {

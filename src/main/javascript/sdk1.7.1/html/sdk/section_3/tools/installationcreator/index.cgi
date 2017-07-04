@@ -1,116 +1,8 @@
 !/bin/bash
 
 LOG=/tmp/sdk.log
-#
-# NAME
-#	installationcreator/index.cgi
-#
-# SYNOPSIS
-#	installationcreator[?application=APP_NAME&step=x&Version=...]
-#
-# DESCRIPTION
-#	This function is used to allow a VAR to generate an RPM file from the list
-#	of files within an application's /home directory.
-#
-# RETURNS
-#	A .rpm file
-#
-# VERSION
-#	1.0	2017-03-08	Draft version.
-#	1.1	2017-03-13	Create /home/sdk/files/applications directory if it does
-#				already exist.
-#	1.2	2017-03-14	Create the spec file in SPECS subdirectory.
-#	1.3	2017-03-21	Create soft links in /var/run/www/html and /var/run/www/cgi-bin
-#				to the new application.
-#	1.4	2017-03-23	Remove the soft links as the platform team state that they will
-#				make the links when the application is installed.
-#				Change the fles to be relocatable.
-#	1.5	2017-04-18	Added %exclude to not include .ash_history or .ssh/ in the generated RPM
-#
-#	1.6	2017-04-21	Changed version number to include build number as part
-#				of the version.  xx.yy.zz
-#
-#	1.7	2017-04-25	Move the temporary BUILD RPMS and SPECS directories to be under
-#				/home/sdk/files/tmp/$application to avoid polluting the more
-#				permanent /home/sdk/files/applications directory.
-#
-#				Also call generate link to the saveAs.cgi to force the "Save as"
-#				dialog
-#				
-#	1.8	2017-05-17	Removed the depricated rpm tag BUILDROOT and added debugging
-#				message showing the rpmbuild command line.
-#
-#   1.9 2017-05-25  Updated to work with RPM 4.13
-#
+
 BuildArch="NoArch"
-
-#
-# NAME
-#	show_first_page
-#
-# SYNOPSIS
-#	http://ip_address/html/sdk/installationcreator
-#
-# DESCRIPTION
-#	This function displays the main (index) page for the package installation creator tool
-#	It asks the user to select one of the available applications.
-#
-# RETURNS
-#	if the user selects an application then
-#
-show_first_page() {
-  cat << EOF
-The Luxe terminal uses the <a href='https://en.wikipedia.org/wiki/RPM_Package_Manager'>RPM Package Manager</a>
-to generate and install packages of software.
-<p>
-The following is from the Linux Documentation Project RPM HOWTO.  
-<p>
-<h2>RPM In a Nutshell</h2>
-Much like a compressed tarball, RPM uses a combination of rolling together multiple files into one
-archive and compression of this archive to build the bulk of the RPM package. Furthermore,
-additional header information is inserted. This includes pre- and post-installation scripts
-to prepare the system for the new package, as well as information for the database that RPM
-maintains. Dependencies are checked before any installation occurs, and if the appropriate
-flags are set for the installation they are also installed.
-<p>
-It is this database that makes RPM work the magic that it does. Stored in there are all of
-the properties of the installed packages. Should this become corrupted, it can be rebuilt
-using the rpm tool. 
-<p>
-<a href='http://www.tldp.org/HOWTO/RPM-HOWTO/build.html'>This link is to the RPM HOWTO - 6.
-Building RPM's</a><br>
-From this descrition, although not complex, the Luxe SDK includes a tool that can generate a
-software installation pack to
-install a copy of all of the files within one application's /home directory.  To allow the
-generated installation pack to be installed onto a production
-terminal, the file <b><i>manifest.xml</i></b> which is part of the pack must be signed and
-the signature placed into a file <b></i>manifest.xml.sig</i></b> and this file added to the 
-package.
-<p>
-<hr>
-EOF
-
-  #
-  # Show the complete list of all /home directories linked into /var/run/www/html
-  #
-  echo "Select which application to create a package for:<p>"
-  for x in $( ls -L /home ) ; do
-    if [[ "$x" != "platform" && "$x" != "default" ]] ; then
-      echo " <a href='?application=$x&step=1'>$x</a><br> "
-    fi
-  done
-  echo "<br>"
-
-cat << EOF
-
-<hr>
-<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
-</body>
-</html>
-EOF
-}
-
-
 #
 # NAME
 #	show_spec_form
@@ -128,54 +20,7 @@ show_spec_form() {
   Summary=${Summary//+/ }
   Vendor=${Vendor//+/ }
   cat << EOF
-  <h3>Step $2 SPEC File</h3>
-  The three directives, <b><i>Name</i></b>, <b><i>Version</i></b>, and <b><i>Release </i></b>
-  are used to create the RPM package's filename.<br>
-  RPM filenames are in Name-Version-Release format.
-  <form action="">
-    <table>
-      <tr>
-        <th align='left' bgcolor='lightgrey'>Field Name</th>
-        <th align='left' bgcolor='lightgrey'>Value</th>
-        <th align='left' bgcolor='lightgrey'>Description</th>
-      </tr>
-      <tr>
-        <td>Name: </td>
-        <td><input type="text" name="Name" value="$application" readonly ></td>
-        <td>The name of the package.</td>
-      </tr>
-      <tr>
-        <td>Version: </td>
-        <td><input type="text" name="Version" value="$Version"></td>
-        <td>major.minor.build version, such as 1.2.1</td>
-      </tr>
-      <tr>
-        <td>Release: </td>
-        <td><input type="text" name="Release" value="$Release"></td>
-        <td>Release number, such as 5</td>
-      </tr>
-      <tr>
-        <td>Summary: </td>
-        <td><input type="text" name="Summary" value="$Summary"></td>
-        <td>One line description of application $application</td>
-      </tr>
-      <tr>
-        <td>Description: </td>
-        <td><textarea name="Description">$Description</textarea></td>
-        <td>A multi-line description</td>
-      </tr>
-      <tr>
-        <td>Vendor:</td>
-        <td><input type="text" name="Vendor" value="$Vendor"></td>
-        <td>Name of your company</td>
-      </tr>
-    </table>
-    <br>
-    <input type="text" name="Group" value="LuxeApp" hidden>
-    <input type="text" name="application" value="$1" hidden>
-    <input type="text" name="step" value="2" hidden>
-    <input type="submit" value="Create RPM SPEC file"> from the files in application $1
-  </form>
+   $application, $Version, $Release, $Summary, $Description, $Vendor, $1, $2
 EOF
 }
 
@@ -236,9 +81,6 @@ step_3() {
   local url_encoded="${Description//+/ }"
   Desc=`printf '%b' "${url_encoded//%/\\x}"`
 
-  echo "<h3>Step 3 - SPEC file</h3>"
-  echo "Please review the generated rpmbuild SPEC file information below:"
-  echo "<p>"
   echo "<pre>"
 
 #  SPEC_TEMP=/tmp/rpm-spec.txt
@@ -289,22 +131,10 @@ fi
   rm -rf /home/sdk/files/tmp/$application/BUILDROOT/
   mkdir -p /home/sdk/files/tmp/$application/BUILDROOT/home/
   ln -s /home/$application /home/sdk/files/tmp/$application/BUILDROOT/home/$application
-  #
-  # Put two clickable buttons.  One to accept and one to return
-  #
   cat << EOF
-<hr>
-<form action="">
-  <input type="text" name="application" value="$application" hidden>
-  <input type="text" name="specpath" value="$SPEC_DIR/$SPEC_file" hidden>
-  <input type="text" name="step" value="4" hidden>
-  <input type="text" name="Version" value="$Version" hidden>
-  <input type="text" name="Release" value="$Release" hidden>
-  <input type="text" name="Vendor" value="$Vendor" hidden>
-  <input type="submit" name="selection" value="Create RPM"> or <input type="submit" name="selection" value="Go back">
-</form>
 EOF
 }
+
 
 
 #
@@ -325,7 +155,6 @@ EOF
 # RETURNS
 #
 step_4() {
-  echo "<h3>Step 4 RPM File</h3>"
 
   BUILD_ROOT=$topdir
   NVR=$application-$Version-$Release
@@ -373,16 +202,12 @@ EOF
     echo "<!-- Running command from directory $BUILD_ROOT/SPECS -->"
     echo "<!-- Command was rpmbuild -bb $BUILD_ROOT/SPECS/$NVR.spec --buildroot /home/sdk/files/tmp/$application/BUILDROOT/ --define "_topdir /home/sdk/files/tmp/$application" -->"
   else
-    echo "<b>ERROR</b>"
+    echo "<h2 id="par-1">ERROR</h2>"
     echo "Build error, $RPMS_FILE file was not generated<br>"
     echo "Running command from directory <b><i>$BUILD_ROOT/SPECS</i></b><br>"
     echo "Command was <b><i>rpmbuild -bb $BUILD_ROOT/SPECS/$NVR.spec --buildroot /home/sdk/files/tmp/$application/BUILDROOT/ --define "_topdir /home/sdk/files/tmp/$application"</i></b><br>"
   fi
 cat << EOF
-  <form action=''>
-    <input type="text" name="step" value="4" hidden>
-    <input type="submit" name="selection" value="Go back">
-  </form>
 EOF
 }
 
@@ -413,52 +238,12 @@ EOF
   echo ""
   cat << EOF
 
-<!DOCTYPE HTML>
-<html>
-<head>
-  <META NAME="Author" CONTENT="Steve Newall">
-  <META NAME="Generator" CONTENT="vi (because real programmers use real editors)">
-  <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
-  <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
-  <script type="text/javascript" src="/common/jquery.js"></script>
-  <script type="text/javascript" src="/common/jphoenix.js"></script>
-  <script type="text/javascript" src="/common/jutils.js"></script>
-  <style>                                                                      
-    table, th, td {                                                            
-      border: 1px solid black;                                                 
-      border-collapse: collapse;                                               
-      padding: 10px;                                                           
-    }                                                                          
-    th {                                                                       
-      height: 20px;                                                            
-      vertical-align: middle;                                                  
-    }                                                                          
-  </style>                                                                     
-
-</head>
-
-<body>
-  <div style='position: relative;'>
-    <img src='/html/sdk/assets/images/bar.png' style='width: 100%; height: 30px;'>
-    <div style='position: absolute; top: 4px; left: 4px;'>
-      <img src='/html/sdk/assets/images/logo.png'>
-    </div>
-    <div style='position: absolute; top: 0px; left: 170px; font-family: sans-serif; font-size: 26px; font-weight: bold; color: white;'>
-      <a href='/html/sdk' class='a_plain'>Luxe SDK</a> - 
-      <a href='/html/sdk/installationcreator' class='a_plain'>Software Package Installation Creator Tool</a>
-    </div>
-<p>
-  <h1>Luxe Software Package Installation Creator</h1>
 EOF
 
   #
   # If the parameter "application" is not available, then display the main page
   # and ask the user to select the application name
   #
-  if [[ "$application" == "" ]] ; then
-    show_first_page
-    exit
-  fi
 
   if [[ $step -eq 1 ]] ; then
     #
@@ -513,7 +298,6 @@ EOF
       #
       # Read in the variables from the rpm-spec.txt file
       #
-      echo "rpm-spec.txt exists, read in the default values"
       Name=`awk '/Name:/ { print $2 }' $specpath`
       Version=`awk '/Version:/ { print $2 }' $specpath`
       Release=`awk '/Release:/ { print $2 }' $specpath`
@@ -571,8 +355,4 @@ EOF
   fi
 
   cat << EOF
-<hr>
-<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
-</body>
-</html>
 EOF

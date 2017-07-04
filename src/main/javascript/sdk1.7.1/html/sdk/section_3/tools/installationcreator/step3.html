@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <META NAME="Author" CONTENT="Steve Newall">
+  <META NAME="Generator" CONTENT="vi (because real programmers use real editors)">
+   <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+  <style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    } 
+    #appName {
+    	display: inline;
+    }    
+    #loader {
+      display: table-cell;
+	  margin-top: 15px;
+      margin-bottom: 15px;
+	  margin: -75px 0 0 -75px;
+	  border: 16px solid #f3f3f3;
+	  border-radius: 50%;
+	  border-top: 16px solid #3498db;
+	  width: 120px;
+	  height: 120px;
+	  -webkit-animation: spin 2s linear infinite;
+	  animation: spin 2s linear infinite;
+	}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#myDiv {
+  display: none;
+  text-align: center;
+}                                                                     
+  </style>                                                                     
+
+<script>
+$(document).ready(function() {
+	var searchPath = location.search;
+		 $.ajax({
+	         url: "index.cgi"+ location.search,
+	         type: "GET",
+	         success: function(html) {
+        	     var queryString = location.search.slice(1).split('&');
+	        	 var dirPath = "/home/sdk/files/tmp/" + queryString[0].split('=')[1] + "/SPECS/" + queryString[0].split('=')[1]+"-"+queryString[1].split('=')[1]+"-"+queryString[2].split('=')[1]+".spec";
+	        	  document.getElementById("loader").style.display = "none";
+	        	  document.getElementById("myDiv").style.display = "block";
+	        	  $("div[id=myDiv]")[0].innerHTML = html;
+	        	 	 $("input[name=application]")[0].value = queryString[0].split('=')[1];
+	        	 	 $("input[name=specpath]")[0].value = dirPath;
+		        	 $("input[name=Version]")[0].value = queryString[1].split('=')[1];
+		        	 $("input[name=Release]")[0].value = queryString[2].split('=')[1];
+		        	 $("input[name=Vendor]")[0].value = queryString[5].split('=')[1];
+	         }, 
+	         error: function(){
+	        	 document.getElementById("loader").style.display = "none"; 
+	         }
+	     });
+		 
+		 $( "form" ).submit(function( event ) {
+			 console.log('dsfafdaf');
+			 
+			  event.preventDefault();
+			});
+    		 
+});
+  </script>
+</head>
+
+<body>
+  <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+	 <h1 id="par-1">Luxe Software Package Installation Creator</h1>
+	 <p>rpm-spec.txt exists, read in the default values</p>
+	 <h3 id="stepName">Step 3 SPEC File</h3>
+  Please review the generated rpmbuild SPEC file information below:
+  <br/>
+  <div id="loader"></div><br/>
+   <div style="display:none;text-align:left;" id="myDiv">
+  </div>
+  <form>
+  <input type="text" name="application" value="" hidden>
+  <input type="text" name="specpath" value="" hidden>
+  <input type="text" name="step" value="4" hidden>
+  <input type="text" name="Version" value="" hidden>
+  <input type="text" name="Release" value="" hidden>
+  <input type="text" name="Vendor" value="" hidden>
+  <input class="btn" type="submit" name="selection" value="Create RPM"> or <input class="btn" type="submit" name="selection" value="Go back">
+</form>
+<hr>
+<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
+</div></div>
+</body>
+</html>
