@@ -24,34 +24,6 @@
     #appName {
     	display: inline;
     }    
-    #loader {
-      display: table-cell;
-	  margin-top: 15px;
-      margin-bottom: 15px;
-	  margin: -75px 0 0 -75px;
-	  border: 16px solid #f3f3f3;
-	  border-radius: 50%;
-	  border-top: 16px solid #3498db;
-	  width: 120px;
-	  height: 120px;
-	  -webkit-animation: spin 2s linear infinite;
-	  animation: spin 2s linear infinite;
-	}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-#myDiv {
-  display: none;
-  text-align: center;
-}                                                                     
   </style>                                                                     
 
 <script>
@@ -62,7 +34,7 @@ $(document).ready(function() {
 	         type: "GET",
 	         success: function(html) {
         	     var queryString = location.search.slice(1).split('&');
-	        	 var dirPath = "/home/sdk/files/tmp/" + queryString[0].split('=')[1] + "/SPECS/" + queryString[0].split('=')[1]+"-"+queryString[1].split('=')[1]+"-"+queryString[2].split('=')[1]+".spec";
+	        	 var dirPath = "/home/sdk/files/tmp/" + queryString[0].split('=')[1] + "/SPECS/";
 	        	  document.getElementById("loader").style.display = "none";
 	        	  document.getElementById("myDiv").style.display = "block";
 	        	  $("div[id=myDiv]")[0].innerHTML = html;
@@ -77,10 +49,13 @@ $(document).ready(function() {
 	         }
 	     });
 		 
-		 $( "form" ).submit(function( event ) {
-			 console.log('dsfafdaf');
-			 
-			  event.preventDefault();
+		 	$('#selection1').click(function(){
+			   $('#my-form').attr('action', 'step4.html');
+			});
+
+
+			$('#selection2').click(function(){
+			   $('#my-form').attr('action', 'application.html');
 			});
     		 
 });
@@ -104,24 +79,23 @@ $(document).ready(function() {
     </div>
     <div id="static-content" class="col-md-9">
 	 <h1 id="par-1">Luxe Software Package Installation Creator</h1>
-	 <p>rpm-spec.txt exists, read in the default values</p>
 	 <h3 id="stepName">Step 3 SPEC File</h3>
   Please review the generated rpmbuild SPEC file information below:
   <br/>
   <div id="loader"></div><br/>
    <div style="display:none;text-align:left;" id="myDiv">
   </div>
-  <form>
+  <form id="my-form">
   <input type="text" name="application" value="" hidden>
   <input type="text" name="specpath" value="" hidden>
   <input type="text" name="step" value="4" hidden>
   <input type="text" name="Version" value="" hidden>
   <input type="text" name="Release" value="" hidden>
   <input type="text" name="Vendor" value="" hidden>
-  <input class="btn" type="submit" name="selection" value="Create RPM"> or <input class="btn" type="submit" name="selection" value="Go back">
+  <button class="btn" type="submit" id="selection1" name="selection" value="Create RPM">Create RPM</button> or <button class="btn" id="selection2" type="submit" name="selection" value="Go back">Go back</button>
 </form>
 <hr>
-<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
+<font size='-2'>This page is installed in /home/sdk/html/section_3/tools/installationcreator/step4.html</font>
 </div></div>
 </body>
 </html>

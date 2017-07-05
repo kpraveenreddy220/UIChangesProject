@@ -3,62 +3,12 @@
 LOG=/tmp/sdk.log
 
 BuildArch="NoArch"
-#
-# NAME
-#	show_spec_form
-#
-# SYNSOPSIS
-#	show_spec_form $application "1 - Create" or "2 - Verify"
-#
-# DESCRIPTION
-#	This function shows the HTML input form that allows the user to
-#	enter or modify the form fields that describe the application.
-#
-# RETURNS
-#
 show_spec_form() {
   Summary=${Summary//+/ }
   Vendor=${Vendor//+/ }
   cat << EOF
    $application, $Version, $Release, $Summary, $Description, $Vendor, $1, $2
 EOF
-}
-
-#
-# NAME
-#	step_2_verify_spec_form
-#
-# SYNOPSIS
-#
-# DESCRIPTION
-#	This function verifies that all of the required fields have been
-#	entered.  If not, the entry form is redisplayed.
-#
-# RETURNS
-#
-step_2_verify_spec_form() {
-    step=3
-    #
-    # Verify the parameters.
-    # If there are any problems then
-    #   show list of errors followed by the spec form via step_1
-    # end if
-    #
-    for parameterName in Name Version Release Summary Description Group Vendor application ; do
-      eval parameter=\$$parameterName
-      if [[ "$parameter" == "" ]] ; then
-        echo "<font color='red'>Mandatory field $parameterName is missing</font><br>"
-        step=1
-      fi
-    done
-    #
-    # If there are errors, (step==1) then 
-    #   redisplay the entry form
-    # end if
-    #   
-    if [[ $step -eq 1 ]] ; then
-      show_spec_form $application "2 - Verify"
-    fi
 }
 
 #
@@ -342,12 +292,7 @@ EOF
   fi
 
   if [[ $step -eq 2 ]] ; then
-    step_2_verify_spec_form
-  fi
-
-  if [[ $step -eq 3 ]] ; then
     step_3
-
   fi
 
   if [[ $step -eq 4 ]] ; then

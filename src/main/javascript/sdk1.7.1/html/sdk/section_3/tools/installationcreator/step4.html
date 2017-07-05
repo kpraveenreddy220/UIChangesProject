@@ -31,7 +31,6 @@ $(document).ready(function() {
 	         type: "GET",
 	         success: function(html) {
         	     var queryString = location.search.slice(1).split('&');
-	        	 var dirPath = "/home/sdk/files/tmp/" + queryString[0].split('=')[1] + "/SPECS/" + queryString[0].split('=')[1]+"-"+queryString[1].split('=')[1]+"-"+queryString[2].split('=')[1]+".spec";
 	        	  document.getElementById("loader").style.display = "none";
 	        	  document.getElementById("myDiv").style.display = "block";
 	        	  $("div[id=myDiv]")[0].innerHTML = html;
@@ -57,15 +56,16 @@ $(document).ready(function() {
         </ul>
     </div>
     <div id="static-content" class="col-md-9">
+    <h1 id="par-1">Step 4 RPM File</h1>
   <div id="loader"></div><br/>
    <div style="display:none;text-align:left;" id="myDiv">
   </div>
-  <form action='step3.html'>
+  <form action='index.html'>
     <input type="text" name="step" value="4" hidden>
     <input class="btn" type="submit" name="selection" value="Go back">
   </form>
 <hr>
-<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
+<font size='-2'>This page is installed in /home/sdk/html/section_3/tools/installationcreator/step4.html</font>
 </div></div>
 </body>
 </html>

@@ -18,39 +18,8 @@ $(document).ready(function() {
             top: 0  // To Modify according to the height offset
         }
     });
-    //Use formData object to make $.ajax request to send a file. 
-   /* $("#resourceSigner").submit(function(e) {
-        var url = "/cgi-bin/sdk/maccalc.cgi"; // the script where you handle the form input.
-        $.ajax({
-               type: "POST",
-               url: url,
-               data: $("#resourceSigner").serialize(), // serializes the form's elements.
-               contentType: "multipart/form-data",
-               success: function(data){
-                   alert(data); // show response from the php script.
-               }
-             });
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-    });*/
-    $(document).on('submit', '.resourceSigner', function(e) {
-    	var form = $('#resourceSigner')[0]; 
-    	var formData = new FormData(form);
-        $.ajax({
-           url: $(this).attr('action'),
-           type: $(this).attr('method'),
-           contentType: $(this).attr('enctype'),
-           data: formData,
-           success: function(html) {
-        	   alert('ok');
-           }
-       });
-       e.preventDefault();
-   });
 });
 
-//$(document).ready(function() {
-//});
 
 function doHighlight() {
     var highlight = ace.require("ace/ext/static_highlight");
@@ -187,8 +156,11 @@ function gotoKeyboardDesigner() {
     window.open("/html/sdk/keyboarddesigner", '_blank', 'location=yes,height=800,width=1280,scroll')
 }
 
-//TODO: remove this function, if nowhere used. 
-function openInstallationCreatorTool() {
-    window.open("/html/sdk/section_3/tools/installationcreator", '_blank', 'location=yes,height=800,width=1024,scrollbars=yes,status=no');
+function htmlEscape(str) {
+	return String(str)
+	  .replace(/&/g, '&amp;')
+	  .replace(/"/g, '&quot;')
+	  .replace(/'/g, '&#39;')
+	  .replace(/</g, '&lt;')
+	  .replace(/>/g, '&gt;');
 }
-

@@ -9,6 +9,38 @@
     <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
 
     <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+    <script> 
+    $(document).ready(function() {
+    	$("#resultContainer").hide(250);
+     $("#resourceSigner").submit(function(e) {
+         var url = "/cgi-bin/sdk/file/signature"; // the script where you handle the form input.
+         $.ajax({
+                type: "GET",
+                url: url,
+                data: $("#resourceSigner").serialize(), // serializes the form's elements.
+                success: function(response){
+                	$("#formContainer").hide(250);
+						$("#resultContainer").show(250);
+					if(response.getElementsByTagName('statusCode')[0].textContent == '0'){
+						$("#resultContainer").css("background-color", "#cae9ad");
+						$("#result")[0].innerText = "MAC Code:";
+						$("#result")[0].innerText  += response.getElementsByTagName('mac')[0].textContent;
+					} else {
+						$("#resultContainer").css("background-color", "#e3a8a8");
+						$("#result")[0].innerText  += response.getElementsByTagName('error')[0].textContent;
+					}
+                },
+              });
+
+         e.preventDefault(); // avoid to execute the actual submit of the form.
+     });
+     $('#goBack').click(function(){
+    	 $("#formContainer").show(250);
+    	 $("#resultContainer").hide(250);
+    	 $("#result")[0].innerText = '';
+     });
+    });
+    </script>
 </head>
 
 <body>
@@ -38,28 +70,33 @@
 			This is a sample POST form where the information to be POST'd is from a file using this web based form.
 			Please use the [Browse] button to select a file (binary or ASCII text) to send to this utility for MAC'ing.
 			<p>
-			<div class="container">
-				<form id="resourceSigner" action='/cgi-bin/sdk/maccalc.cgi' method='POST' enctype='multipart/form-data'>
+			<div id="formContainer" class="container">
+				<form id="resourceSigner">
 					<div class="col-md-6 form-line">
 			  			<div class="form-group">
 			  				<label for="key">MAC Key</label>
-					    	<input type="text" class="form-control" name="key" value="1010101010101010">
+					    	<input type="text" class="form-control" name="key" value="1010101010101010" required>
 				  		</div>
 				  		<div class="form-group">
 					    	<label for="file">Please select a resource to sign-</label>
-					    	<input type="file" class="form-control" name="file">
+					    	<input type="file" class="form-control" name="file" required>
 					  	</div>	
 					  	<div class="form-group">
 					    	<label for="resourceType">Set the resource type</label>
-					    	<select class="form-control" name="resourceType">
+					    	<select class="form-control" name="resourceType" required>
 					        	<option value="1">Background</option>
 							    <option value="7">Keyboard</option>
 							    <option value="129">PAN or CVV</option>
 					      	</select>
 			  			</div>
-			  			<input type="submit" class="btn btn-primary" value="Submit Request" />
+			  			<input type="submit" class="btn" value="Submit Request" />
 			  		</div>
 				</form>
+			</div>
+			<div id="resultContainer" class="container">
+			  <input type="button" class="btn btn-link" id="goBack" value="Resouce Signer"> 
+				<h3>Result </h3>
+				<p id="result"></p>				
 			</div>
 			<hr>
 		<font size='-2'>This page is installed in /home/sdk/html/resourcesigner/index.html</font>

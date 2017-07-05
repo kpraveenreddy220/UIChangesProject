@@ -29,7 +29,7 @@ $(document).ready(function() {
 		$.each(dirName, function(i, dir){
 			if(dir != "platform" && dir != "default") {
 				var content = $("p[class=replaceContent]")[0];	
-				content.innerHTML = "<a href='?application="+ dir + "&step=1'>"+dir+"</a><br>";
+				content.innerHTML += "<a class='application btn btn-link' href='application.html?"+dir+"&1'>"+dir+"</a><br>";
 			}
 		 })
 		})
@@ -82,8 +82,7 @@ $(document).ready(function() {
 		package.
 		 <p class="replaceContent"></p>
 		<hr>
-<hr>
-<font size='-2'>This page is installed in /home/sdk/html/installationcreator/index.cgi</font>
+		<font size='-2'>This page is installed in /home/sdk/html/section_3/tools/installationcreator/index.html</font>
     </div>
 </body>
 </html>
