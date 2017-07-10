@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <META NAME="Author" CONTENT="Steve Newall">
+  <META NAME="Generator" CONTENT="vi (because real programmers use real editors)">
+   <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
+    <link  rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
+  <style>                                                                      
+    table, th, td {                                                            
+      border: 1px solid black;                                                 
+      border-collapse: collapse;                                               
+      padding: 10px;                                                           
+    }                                                                          
+    th {                                                                       
+      height: 20px;                                                            
+      vertical-align: middle;                                                  
+    } 
+    #appName {
+    	display: inline;
+    }                                                                         
+  </style>                                                                     
+
+<script>
+$(document).ready(function() {
+	var dynamicUrl, params = []; 
+	if(location.search.indexOf("selection=Go+back") > 0){
+		dynamicUrl = location.search;
+	} else {
+		params = location.search.replace('?', '').split('&');
+		dynamicUrl = "?application="+params[0]+"&step="+params[1];
+	}
+	
+    document.getElementById("rpmExists").style.display = "none";
+	   $.ajax({
+         url: "index.cgi" + dynamicUrl,
+         type: "GET",
+         success: function(html) {
+        	 var arrValues = html.split(',');
+        	 if(arrValues[1].trim().length > 0){
+        		 document.getElementById("rpmExists").style.display = "block";
+        	 }
+        	 $("input[name=Name]")[0].value = arrValues[0].trim();
+        	 $("input[name=Version]")[0].value = arrValues[1].trim();
+        	 $("input[name=Release]")[0].value = arrValues[2].trim();
+        	 $("input[name=Summary]")[0].value = arrValues[3].trim();
+        	 $("textarea[name=Description]")[0].value = arrValues[4].trim();
+        	 $("input[name=Vendor]")[0].value = arrValues[5].trim();
+        	 var appName = $("p[id=appName]")[0];
+        	 appName.innerHTML = appName.textContent.replace('$1', arrValues[6].trim()); 
+        	 $("input[name=application]")[0].value = arrValues[0].trim();
+         }
+     });  
+		 
+});
+  </script>
+</head>
+
+<body>
+  <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
+    </div>
+    <div id="static-content" class="col-md-9">
+	 <h1 id="par-1">Luxe Software Package Installation Creator</h1>
+	 <p id="rpmExists">rpm-spec.txt exists, read in the default values</p>
+	 <h3>Step 1 Create SPEC File</h3>
+  The three directives, <b><i>Name</i></b>, <b><i>Version</i></b>, and <b><i>Release </i></b>
+  are used to create the RPM package's filename.<br>
+  RPM filenames are in Name-Version-Release format.
+  <form id="applicationForm" action="step3.html">
+    <table>
+      <tr>
+        <th align='left' bgcolor='lightgrey'>Field Name</th>
+        <th align='left' bgcolor='lightgrey'>Value</th>
+        <th align='left' bgcolor='lightgrey'>Description</th>
+      </tr>
+      <tr>
+        <td>Name: </td>
+        <td><input class="form-control" type="text" name="Name" value="" readonly></td>
+        <td>The name of the package.</td>
+      </tr>
+      <tr>
+        <td>Version: </td>
+        <td><input class="form-control" type="text" name="Version" value="" required></td>
+        <td>major.minor.build version, such as 1.2.1</td>
+      </tr>
+      <tr>
+        <td>Release: </td>
+        <td><input class="form-control" type="text" name="Release" value="" required></td>
+        <td>Release number, such as 5</td>
+      </tr>
+      <tr>
+        <td>Summary: </td>
+        <td><input class="form-control" type="text" name="Summary" value="" required></td>
+        <td>One line description of application $application</td>
+      </tr>
+      <tr>
+        <td>Description: </td>
+        <td><textarea class="form-control" name="Description" required></textarea></td>
+        <td>A multi-line description</td>
+      </tr>
+      <tr>
+        <td>Vendor:</td>
+        <td><input class="form-control" type="text" name="Vendor" value="" required></td>
+        <td>Name of your company</td>
+      </tr>
+    </table>
+    <br>
+    <input type="text" name="Group" value="LuxeApp" hidden>
+    <input type="text" name="application" value="$1" hidden>
+    <input type="text" name="step" value="2" hidden>
+    <input class="btn btn-primary" type="submit" value="Create RPM SPEC file"> 
+    <p id="appName">from the files in application $1</p>
+  </form>
+<hr>
+<font size='-2'>This page is installed in /home/sdk/html/section_3/tools/installationcreator/application.html</font>
+</body>
+</html>
