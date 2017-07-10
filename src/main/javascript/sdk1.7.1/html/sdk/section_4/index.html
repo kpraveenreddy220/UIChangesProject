@@ -3,9 +3,12 @@
 <head>
   <link rel="stylesheet" type="text/css" href="/html/sdk/assets/css/styles.css">
   <link rel="stylesheet" href="/html/sdk/components/bootstrap-3.3.7/css/bootstrap.min.css">
-  <script type="text/javascript" src="/common/jquery.js"></script>
-  <script type="text/javascript" src="/common/jphoenix.js"></script>
-  <script type="text/javascript" src="/common/jutils.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/components/jquery-2.2.4/jquery.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/html/sdk/components/mustache-2.3.0/mustache.min.js"></script>
+
+    <script type="text/javascript" src="/html/sdk/assets/js/app.js"></script>
   <style>                                                                      
     table, th, td {                                                            
       border: 1px solid black;                                                 
@@ -21,85 +24,94 @@
 </head>
 
 <body>
-  <div style='position: relative;'>
-    <img src='/html/sdk/assets/images/bar.png' style='width: 100%; height: 30px;'>
-    <div style='position: absolute; top: 4px; left: 4px;'>
-      <img src='/html/sdk/assets/images/logo.png'>
+<nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
+    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
+    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>&nbsp&nbsp&nbsp&nbsp
+        <a href="/html/sdk/section_4" style="font-size: 20px; font-weight: bold; color: white;">Section_4</a>&nbsp&nbsp
+        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
+        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
     </div>
-    <div style='position: absolute; top: 0px; left: 170px; font-family: sans-serif; font-size: 26px; font-weight: bold; color: white;'>
-       <a href='/html/sdk' class='a_plain'>Luxe SDK</a> - Section 4 - Application Programmer's Guide
+</nav>
+
+<div class="container-fluid">
+    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
+        <ul class="main-menu nav nav-stacked affix">
+        </ul>
     </div>
-<p>
-  <h1>Overview</h1>
-This document is the Application Programmer's Guide for the Equinox Payments Luxe family of terminals.
-<p>
-System Overview
-Applications for the Microsoft Luxe family of terminals can be written in:
-<ul>
-  <li/>HTML5 or JavaScript for a rich user experience environment
-  <li/>C or C++ for traditional code development
-  <li/>A combination of both coding styles
-</ul>
-The Luxe family uses a standard web browser to control the rendering of information that is displayed on the terminal.
-<br/>
-Web pages are assumed to consist of HTML objects, with CSS and JavaScript to control the formatting of its objects.
-  For C/C++ code to interact with the web based GUI, Equinox supplies a rich set of API functions as defined in the document
-<a href='/html/sdk/documentation/Luxe_HTTP_API_Specification.pdf'>Luxe HTTP API Specification</a>
-<p/>
-To assist in the generation of HTML pages, Microsoft has developed a drag-and-drop PageBuilder tool that creates HTML page templates which may be used as the basis for the end user’s HTML5 pages.
-<p>
-<h2><a href='/html/sdk/section_4/chapter_3.html'>Chapter 3 - Creating and Loading Secure Prompt Resources</a></h2>
-<h3>PCI 4.1 and Prompting for Input</h3>
-The Luxe terminals are PCI 4.1 certified, and this places some restrictions on the application display
- of prompts (that is, messages asking for the input of data).  As stated from the <b>PCI PIN Transaction
- Security (PTS) Point of Interaction (POI) Modular Security Requirements:</b>
-
-<p style='margin-left: 80px'>
-	All prompts for non-PIN data entry are under the control of the cryptographic unit
-	of the device. If the prompts are stored inside the cryptographic unit, they cannot
-	feasibly be altered without causing the erasure of the unit's cryptographic keys.
-	If the prompts are stored outside the cryptographic unit, cryptographic mechanisms
-	must exist to ensure the authenticity and the proper use of the prompts and that
-	modification of the prompts or improper use of the prompts is prevented.
-</p>
-For additional information on the Luxe solution for the display of prompts, please refer to
- the <a href='/html/sdk/documentation/Luxe_HTTP_API_Specification.pdf''>Luxe HTTP API Specification</a>, Appendix C. Prompts and Secure Input Functions.
-
-
-<h2><a href='/html/sdk/section_4/chapter_4.html'>Chapter 4 - HTML / JavaScript Applications</a></h2>
-The WWW originated as a method of sharing static files stored on a remote web server.  With the advent of web server side
- software, developer's quickly evolved methods of generating the pages on the fly on the server side.
-  The next advancement was the addition of web browser software tools (JavaScript) to allow for the modification
- of pages on the fly on the web browser client side.
-<p/>
-HTML5 has built upon this with the inclusion of HTML for basic page presentation, CSS for page presentation,
- and JavaScript for page logic and behaviour.
-<p/>
-For security reasons, traditional web pages did not have access to the internal resources of the machine on
- which the browser was running.  All information needed to be stored and retrieved from the remote web server.
-  However, the W3C recognised that for modern tablets and smartphone type HTML5 applications, there is a need
- for HTML5 apps to access some parts of the device, such as access to the GPS system for location information,
- the camera for virtual reality apps, etc, and they are actively working on adding other support (local
- database storage) for other devices through the Device API's Working Group (<a href='https://www.w3.org/2009/dap/'>https://www.w3.org/2009/dap/</a>)
-<p>
-In developing HTML5/JavaScript applications for the Luxe terminal, Microsoft supplies a set JavaScript  library functions and Application Programming Interface (API) specifications that allows the JavaScript application developer to rapidly write applications on the Luxe series of devices.
-<p>
-
-<h2><a href='/html/sdk/section_4/chapter_5.html'>Chapter 5 - C/C++ Applications</a></h2>
-In developing C/C++ applications for the Luxe terminals, Microsoft supplies an Ubuntu based
-  GNU Compiler Collection (gcc) , set of C/C++ library functions, and Application Programming Interface
- (API) documentation that allows the C/C++ application developer to rapidly write new applications or
- port existing C/C++ applications on to the Luxe family of terminals.
-<p/>
-
-<h2><a href='/html/sdk/platform-libs-doc/index.html'>Chapter 9 - Platform API</a></h2>
-Luxe Platform API (C++/JavaScript) <a href="/html/sdk/platform-libs-doc/index.html">documentation with examples</a>.
-<p/>
-
-<p>
-
-<font size="-2">This page is located in /home/sdk/html/section_4/index.html</font>
-<p>
+    <div id="static-content" class="col-md-9">
+    <p>
+  <h1 id="par-1">Overview</h1>
+	This document is the Application Programmer's Guide for the Equinox Payments Luxe family of terminals.
+	<p>
+	System Overview
+	Applications for the Microsoft Luxe family of terminals can be written in:
+	<ul>
+	  <li/>HTML5 or JavaScript for a rich user experience environment
+	  <li/>C or C++ for traditional code development
+	  <li/>A combination of both coding styles
+	</ul>
+	The Luxe family uses a standard web browser to control the rendering of information that is displayed on the terminal.
+	<br/>
+	Web pages are assumed to consist of HTML objects, with CSS and JavaScript to control the formatting of its objects.
+	  For C/C++ code to interact with the web based GUI, Equinox supplies a rich set of API functions as defined in the document
+	<a href='/html/sdk/documentation/Luxe_HTTP_API_Specification.pdf'>Luxe HTTP API Specification</a>
+	<p/>
+	To assist in the generation of HTML pages, Microsoft has developed a drag-and-drop PageBuilder tool that creates HTML page templates which may be used as the basis for the end user’s HTML5 pages.
+	<p>
+	<h1 id="par-2"><a href='/html/sdk/section_4/chapter_3.html'>Chapter 3 - Creating and Loading Secure Prompt Resources</a></h1>
+	<h2 id="sub-par-2-1">PCI 4.1 and Prompting for Input</h2>
+	The Luxe terminals are PCI 4.1 certified, and this places some restrictions on the application display
+	 of prompts (that is, messages asking for the input of data).  As stated from the <b>PCI PIN Transaction
+	 Security (PTS) Point of Interaction (POI) Modular Security Requirements:</b>
+	
+	<p style='margin-left: 80px'>
+		All prompts for non-PIN data entry are under the control of the cryptographic unit
+		of the device. If the prompts are stored inside the cryptographic unit, they cannot
+		feasibly be altered without causing the erasure of the unit's cryptographic keys.
+		If the prompts are stored outside the cryptographic unit, cryptographic mechanisms
+		must exist to ensure the authenticity and the proper use of the prompts and that
+		modification of the prompts or improper use of the prompts is prevented.
+	</p>
+	For additional information on the Luxe solution for the display of prompts, please refer to
+	 the <a href='/html/sdk/documentation/Luxe_HTTP_API_Specification.pdf''>Luxe HTTP API Specification</a>, Appendix C. Prompts and Secure Input Functions.
+	
+	
+	<h1 id="par-3"><a href='/html/sdk/section_4/chapter_4.html'>Chapter 4 - HTML / JavaScript Applications</a></h1>
+	The WWW originated as a method of sharing static files stored on a remote web server.  With the advent of web server side
+	 software, developer's quickly evolved methods of generating the pages on the fly on the server side.
+	  The next advancement was the addition of web browser software tools (JavaScript) to allow for the modification
+	 of pages on the fly on the web browser client side.
+	<p/>
+	HTML5 has built upon this with the inclusion of HTML for basic page presentation, CSS for page presentation,
+	 and JavaScript for page logic and behaviour.
+	<p/>
+	For security reasons, traditional web pages did not have access to the internal resources of the machine on
+	 which the browser was running.  All information needed to be stored and retrieved from the remote web server.
+	  However, the W3C recognised that for modern tablets and smartphone type HTML5 applications, there is a need
+	 for HTML5 apps to access some parts of the device, such as access to the GPS system for location information,
+	 the camera for virtual reality apps, etc, and they are actively working on adding other support (local
+	 database storage) for other devices through the Device API's Working Group (<a href='https://www.w3.org/2009/dap/'>https://www.w3.org/2009/dap/</a>)
+	<p>
+	In developing HTML5/JavaScript applications for the Luxe terminal, Microsoft supplies a set JavaScript  library functions and Application Programming Interface (API) specifications that allows the JavaScript application developer to rapidly write applications on the Luxe series of devices.
+	<p>
+	
+	<h1 id="par-4"><a href='/html/sdk/section_4/chapter_5.html'>Chapter 5 - C/C++ Applications</a></h1>
+	In developing C/C++ applications for the Luxe terminals, Microsoft supplies an Ubuntu based
+	  GNU Compiler Collection (gcc) , set of C/C++ library functions, and Application Programming Interface
+	 (API) documentation that allows the C/C++ application developer to rapidly write new applications or
+	 port existing C/C++ applications on to the Luxe family of terminals.
+	<p/>
+	
+	<h1 id="par-5"><a href='/html/sdk/platform-libs-doc/index.html'>Chapter 9 - Platform API</a></h1>
+	Luxe Platform API (C++/JavaScript) <a href="/html/sdk/platform-libs-doc/index.html">documentation with examples</a>.
+	<p/>
+	
+	<p>
+	<hr>
+	<font size="-2">This page is located in /home/sdk/html/section_4/index.html</font>
+	<p>
+    </div>
 </div>
 </body>
 </html>

@@ -22,11 +22,11 @@
                 	$("#formContainer").hide(250);
 						$("#resultContainer").show(250);
 					if(response.getElementsByTagName('statusCode')[0].textContent == '0'){
-						$("#resultContainer").css("background-color", "#cae9ad");
+						$("#result").css("background-color", "#cae9ad");
 						$("#result")[0].innerText = "MAC Code:";
 						$("#result")[0].innerText  += response.getElementsByTagName('mac')[0].textContent;
 					} else {
-						$("#resultContainer").css("background-color", "#e3a8a8");
+						$("#result").css("background-color", "#e3a8a8");
 						$("#result")[0].innerText  += response.getElementsByTagName('error')[0].textContent;
 					}
                 },
@@ -37,6 +37,7 @@
      $('#goBack').click(function(){
     	 $("#formContainer").show(250);
     	 $("#resultContainer").hide(250);
+    	 $('#resourceSigner')[0].reset();
     	 $("#result")[0].innerText = '';
      });
     });
@@ -47,7 +48,7 @@
    <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
     <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
     <div style="display: inline-block; font-family: sans-serif; height: 36px;">
-        <a href='/html/sdk' style="font-size: 26px; font-weight: bold; color: white;">Luxe SDK - Chapter 1 - HTTP API</a>
+        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
         <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
         <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
     </div>
@@ -89,12 +90,12 @@
 							    <option value="129">PAN or CVV</option>
 					      	</select>
 			  			</div>
-			  			<input type="submit" class="btn" value="Submit Request" />
+			  			<input type="submit" class="btn btn-primary" value="Submit Request" />
 			  		</div>
 				</form>
 			</div>
 			<div id="resultContainer" class="container">
-			  <input type="button" class="btn btn-link" id="goBack" value="Resouce Signer"> 
+			  <button class="btn btn-default" id="goBack" value="Resouce Signer"> <span class="glyphicon glyphicon-backward"></span>Resouce Signer</button>
 				<h3>Result </h3>
 				<p id="result"></p>				
 			</div>

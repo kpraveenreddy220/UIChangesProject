@@ -74,6 +74,7 @@ function parseXML(data) {
     }
 }
 
+//implemented to accept multiple types at once. 
 function fileDir(path, type, cb) {
     var applicationNames = [];
     $.ajax({
@@ -87,7 +88,7 @@ function fileDir(path, type, cb) {
                 var appName = apps[d].innerHTML;
                 applicationNames.push(appName);
             }
-            cb(applicationNames);
+            cb(applicationNames, response);
         }
     });
 }

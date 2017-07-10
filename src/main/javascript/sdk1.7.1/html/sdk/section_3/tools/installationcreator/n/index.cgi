@@ -138,32 +138,32 @@ show_spec_form() {
       </tr>
       <tr>
         <td>Name: </td>
-        <td><input class="form-control" type="text" name="Name" value="$application" readonly ></td>
+        <td><input type="text" name="Name" value="$application" readonly ></td>
         <td>The name of the package.</td>
       </tr>
       <tr>
         <td>Version: </td>
-        <td><input class="form-control" type="text" name="Version" value="$Version"></td>
+        <td><input type="text" name="Version" value="$Version"></td>
         <td>major.minor.build version, such as 1.2.1</td>
       </tr>
       <tr>
         <td>Release: </td>
-        <td><input class="form-control" type="text" name="Release" value="$Release"></td>
+        <td><input type="text" name="Release" value="$Release"></td>
         <td>Release number, such as 5</td>
       </tr>
       <tr>
         <td>Summary: </td>
-        <td><input class="form-control" type="text" name="Summary" value="$Summary"></td>
+        <td><input type="text" name="Summary" value="$Summary"></td>
         <td>One line description of application $application</td>
       </tr>
       <tr>
         <td>Description: </td>
-        <td><textarea class="form-control" name="Description">$Description</textarea></td>
+        <td><textarea name="Description">$Description</textarea></td>
         <td>A multi-line description</td>
       </tr>
       <tr>
         <td>Vendor:</td>
-        <td><input class="form-control" type="text" name="Vendor" value="$Vendor"></td>
+        <td><input type="text" name="Vendor" value="$Vendor"></td>
         <td>Name of your company</td>
       </tr>
     </table>
@@ -171,7 +171,7 @@ show_spec_form() {
     <input type="text" name="Group" value="LuxeApp" hidden>
     <input type="text" name="application" value="$1" hidden>
     <input type="text" name="step" value="2" hidden>
-    <input class="btn" type="submit" value="Create RPM SPEC file"> from the files in application $1
+    <input type="submit" value="Create RPM SPEC file"> from the files in application $1
   </form>
 EOF
 }
@@ -306,7 +306,7 @@ fi
   <input type="text" name="Version" value="$Version" hidden>
   <input type="text" name="Release" value="$Release" hidden>
   <input type="text" name="Vendor" value="$Vendor" hidden>
-  <input class="btn" type="submit" name="selection" value="Create RPM"> or <input class="btn" type="submit" name="selection" value="Go back">
+  <input type="submit" name="selection" value="Create RPM"> or <input type="submit" name="selection" value="Go back">
 </form>
 EOF
 }
@@ -386,7 +386,7 @@ EOF
 cat << EOF
   <form action=''>
     <input type="text" name="step" value="4" hidden>
-    <input class="btn" type="submit" name="selection" value="Go back">
+    <input type="submit" name="selection" value="Go back">
   </form>
 EOF
 }
@@ -446,22 +446,17 @@ EOF
 </head>
 
 <body>
-  <nav style="background-image: url('/html/sdk/assets/images/bar.png'); background-size: 100%; padding-left: 15px;">
-    <img src='/html/sdk/assets/images/logo.png' style="vertical-align: baseline;">
-    <div style="display: inline-block; font-family: sans-serif; height: 36px;">
-        <a href="/html/sdk/index.html" style="font-size: 26px; font-weight: bold; color: white;">Luxe Software Development Kit</a>
-        <a href="javascript:openAboutWindow();" style="font-size: 10px; color: white;">SDK version</a>
-        <a href="javascript:openAboutFullWindow();" style="font-size: 10px; color: white;">Full version</a>
+  <div style='position: relative;'>
+    <img src='/html/sdk/assets/images/bar.png' style='width: 100%; height: 30px;'>
+    <div style='position: absolute; top: 4px; left: 4px;'>
+      <img src='/html/sdk/assets/images/logo.png'>
     </div>
-</nav>
-
-<div class="container-fluid">
-    <div id="sidebar-menu" class="col-md-3 hidden-xs hidden-sm">
-        <ul class="main-menu nav nav-stacked affix">
-        </ul>
+    <div style='position: absolute; top: 0px; left: 170px; font-family: sans-serif; font-size: 26px; font-weight: bold; color: white;'>
+      <a href='/html/sdk' class='a_plain'>Luxe SDK</a> - 
+      <a href='/html/sdk/installationcreator' class='a_plain'>Software Package Installation Creator Tool</a>
     </div>
-    <div id="static-content" class="col-md-9">
-	 <h1 id="par-1">Luxe Software Package Installation Creator</h1>
+<p>
+  <h1>Luxe Software Package Installation Creator</h1>
 EOF
 
   #
