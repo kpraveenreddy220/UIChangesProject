@@ -1,9 +1,0 @@
-{
-  "name": "backbone",
-  "version": "0.0.1",
-  "main" : "backbone.js",
-  "dependencies": {
-    "underscore": "1.8.3",
-  },
-  "private": true
-}
