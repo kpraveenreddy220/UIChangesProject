@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	var result = function(param1, param2, param3){
-		return "Hello, This is " +  param1 + "and your pwd is" + param2 + "and aged" + param3;
+		return "Hello, This is " +  param1 + " and your pwd is " + param2 + " and aged " + param3;
 	};
 	var database = [{name: "praveen", pwd: "test", age: 28}, 
 		{name: "pradeep", pwd: "hello", age: 25},
@@ -9,7 +9,8 @@ $(document).ready(function(){
 	var username = prompt("enter your username");
 	var response;
 	for(var i=0; i< database.length; i++){ // i =0, database.length = 3
-		for(key in database[i]){  // database[i=0] = {name: "praveen", pwd: "test", age: 28}
+		
+		/*for(key in database[i]){  // database[i=0] = {name: "praveen", pwd: "test", age: 28}
 			if(database[i][key] === username){  //key = praveen 
 				var pwd = prompt("enter your pwd");
 				if(pwd === database[i].pwd){
@@ -31,6 +32,27 @@ $(document).ready(function(){
 			}
 			break;
 		}
+		*/
+		var obj = database[i];
+		if(obj.name === username){
+			var pwd = prompt("enter your pwd");
+			if(pwd === database[i].pwd){
+				var age = prompt("enter your age");
+				if(age === String(database[i].age)){
+					//response = result();
+					response = result(username, pwd, age);
+					break;
+				} else {
+					response = "wrong age";
+					break;
+				}
+			} else {
+				response = "wrong pwd";
+			}
+		} else {
+			response = "wrong username";
+		}
+		
 	}
-	document.getElementById("demo").innerHtml = response;
+	document.getElementById("demo").innerHTML = response;
 });
