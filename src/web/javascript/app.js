@@ -50,7 +50,7 @@ $(document).ready(function(){
 				response = "wrong pwd";
 			}
 		} else {
-			response = "wrong username";
+			response = "wrong credentials";
 		}
 		
 	}
